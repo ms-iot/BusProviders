@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft. All rights reserved.
 #include "pch.h"  
 #include "AdcAds1x15Provider.h"  
 #include "AdcAds1x15ControllerProvider.h"  

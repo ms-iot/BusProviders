@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft. All rights reserved.
 #pragma once
 
 namespace AdcAds1x15
