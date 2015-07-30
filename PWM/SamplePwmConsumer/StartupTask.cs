@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Copyright (c) Microsoft. All rights reserved.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,7 @@ namespace SamplePwmConsumer
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             deferral = taskInstance.GetDeferral();
-            // pwmController =  (await PwmController.GetControllersAsync(PwmProviderPCA9685.PwmProviderPCA9685.GetPwmProvider()))[0];
+            // pwmController =  (await PwmController.GetControllersAsync(PwmPCA9685.PwmProviderPCA9685.GetPwmProvider()))[0];
             pwmController = (await PwmController.GetControllersAsync(PwmSoftware.PwmProviderSoftware.GetPwmProvider()))[0];
             pwmController.SetDesiredFrequency(50);
             motorPin = pwmController.OpenPin(13);

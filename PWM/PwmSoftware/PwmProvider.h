@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿// Copyright (c) Microsoft. All rights reserved.
+#pragma once
 
 namespace PwmSoftware
 {
