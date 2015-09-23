@@ -19,9 +19,6 @@ namespace ArduinoProviders
     {
 
     public:
-        ArduinoI2cDeviceProvider(ProviderI2cConnectionSettings ^settings);
-        virtual ~ArduinoI2cDeviceProvider();
-
         // Inherited via II2cDeviceProvider
         virtual property Platform::String ^ DeviceId
         {
@@ -38,6 +35,11 @@ namespace ArduinoProviders
             const Platform::Array<unsigned char> ^writeBuffer,
             Platform::WriteOnlyArray<unsigned char> ^readBuffer);
 
+        virtual ~ArduinoI2cDeviceProvider();
+
+    internal:
+        ArduinoI2cDeviceProvider(ProviderI2cConnectionSettings ^settings);
+
     private:
         void SendI2cSysex(
             const uint8_t address,
@@ -46,6 +48,7 @@ namespace ArduinoProviders
             uint8_t *data);
 
 
+    private:
         ProviderI2cConnectionSettings ^_ConnectionSettings;
 
         UsbSerial ^_Usb;

@@ -15,21 +15,6 @@ namespace ArduinoProviders
     {
 
     public:
-        ArduinoGpioPinProvider(int pinNumber, ProviderGpioSharingMode sharingMode) :
-            _PinNumber(pinNumber),
-            _SharingMode(sharingMode),
-            _DriveMode(ProviderGpioPinDriveMode::Input)
-        {
-            if (sharingMode != ProviderGpioSharingMode::Exclusive)
-            {
-                throw ref new Platform::Exception(E_NOTIMPL, L"Unsupported Gpio Pin SharingMode");
-            }
-
-            Initialize();
-        }
-
-        virtual ~ArduinoGpioPinProvider() {}
-
         // Inherited via IGpioPinProvider
         virtual event TypedEventHandler<IGpioPinProvider^, GpioPinProviderValueChangedEventArgs^>^ ValueChanged;
 
@@ -54,6 +39,24 @@ namespace ArduinoProviders
         virtual void SetDriveMode(ProviderGpioPinDriveMode value);
         virtual void Write(ProviderGpioPinValue value);
         virtual ProviderGpioPinValue Read();
+
+        virtual ~ArduinoGpioPinProvider()
+        {
+        }
+
+    internal:
+        ArduinoGpioPinProvider(int pinNumber, ProviderGpioSharingMode sharingMode) :
+            _PinNumber(pinNumber),
+            _SharingMode(sharingMode),
+            _DriveMode(ProviderGpioPinDriveMode::Input)
+        {
+            if (sharingMode != ProviderGpioSharingMode::Exclusive)
+            {
+                throw ref new Platform::Exception(E_NOTIMPL, L"Unsupported Gpio Pin SharingMode");
+            }
+
+            Initialize();
+        }
 
     private:
         void Initialize();

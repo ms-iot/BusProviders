@@ -14,15 +14,6 @@ namespace ArduinoProviders
     public ref class ArduinoAdcControllerProvider sealed : public IAdcControllerProvider
     {
     public:
-        ArduinoAdcControllerProvider()
-        {
-            Initialize();
-        }
-
-        virtual ~ArduinoAdcControllerProvider()
-        {
-        }
-
         // Inherited via IAdcControllerProvider
         virtual property int ChannelCount { int get() { return _ArduinoChannelCount; }}
         virtual property int MaxValue { int get() { return 1 << _ArduinoResolutionBits; } }
@@ -43,9 +34,19 @@ namespace ArduinoProviders
             return (channelMode == ProviderAdcChannelMode::SingleEnded);
         }
 
-        virtual void AcquireChannel(int channel);
-        virtual void ReleaseChannel(int channel);
+        virtual void AcquireChannel(int channel) { /*no op*/ }
+        virtual void ReleaseChannel(int channel) { /*no op*/ }
         virtual int ReadValue(int channelNumber);
+
+        virtual ~ArduinoAdcControllerProvider()
+        {
+        }
+
+    internal:
+        ArduinoAdcControllerProvider()
+        {
+            Initialize();
+        }
 
     private:
         void Initialize();

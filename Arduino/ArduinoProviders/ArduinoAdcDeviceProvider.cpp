@@ -9,16 +9,6 @@ UsbSerial ^ArduinoAdcControllerProvider::_Usb = nullptr;
 RemoteDevice ^ArduinoAdcControllerProvider::_Arduino = nullptr;
 bool ArduinoAdcControllerProvider::_Connected = false;
 
-void ArduinoAdcControllerProvider::AcquireChannel(int /*channel*/)
-{
-    // No-op
-}
-
-void ArduinoAdcControllerProvider::ReleaseChannel(int /*channel*/)
-{
-    // No-op
-}
-
 int ArduinoAdcControllerProvider::ReadValue(int channel)
 {
     if (!_Connected)
@@ -35,7 +25,7 @@ void ArduinoAdcControllerProvider::Initialize()
     {
         _Usb = ref new UsbSerial("VID_2341", "PID_0043");
 
-        int baudRate = 115200; //TODO: correct baud rate?
+        int baudRate = 115200;
         _Usb->begin(baudRate, SerialConfig::SERIAL_8N1);
 
 

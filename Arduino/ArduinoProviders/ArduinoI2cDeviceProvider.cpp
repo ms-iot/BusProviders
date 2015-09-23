@@ -14,7 +14,7 @@ ArduinoI2cDeviceProvider::ArduinoI2cDeviceProvider(ProviderI2cConnectionSettings
 
     _Usb = ref new UsbSerial("VID_2341", "PID_0043");
 
-    uint8_t baudRate = 115200; //TODO: correct baud rate?
+    int baudRate = 115200;
     _Usb->begin(baudRate, SerialConfig::SERIAL_8N1);
 
     _Firmata = ref new UwpFirmata();
@@ -37,7 +37,9 @@ ArduinoI2cDeviceProvider::ArduinoI2cDeviceProvider(ProviderI2cConnectionSettings
 ArduinoI2cDeviceProvider::~ArduinoI2cDeviceProvider()
 {
     CloseHandle(_DataRead);
+    _Firmata->finish();
     _Usb->end();
+
 }
 
 Platform::String ^ ArduinoI2cDeviceProvider::DeviceId::get()

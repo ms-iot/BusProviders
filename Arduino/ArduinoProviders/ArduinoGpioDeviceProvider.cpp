@@ -105,7 +105,7 @@ RemoteDevice^ ArduinoGpioControllerProvider::Arduino::get()
     {
         _Usb = ref new UsbSerial("VID_2341", "PID_0043");
 
-        int baudRate = 115200; //TODO: correct baud rate?
+        int baudRate = 115200;
         _Usb->begin(baudRate, SerialConfig::SERIAL_8N1);
 
 

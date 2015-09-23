@@ -14,9 +14,6 @@ namespace ArduinoProviders
     public ref class ArduinoPwmControllerProvider sealed : public IPwmControllerProvider
     {
     public:
-        ArduinoPwmControllerProvider() { Initialize(); }
-        virtual ~ArduinoPwmControllerProvider() {}
-
         // Inherited via IPwmControllerProvider
         virtual property double ActualFrequency
         {
@@ -47,13 +44,20 @@ namespace ArduinoProviders
 
         virtual void SetPulseParameters(int pin, double dutyCycle, bool invertPolarity);
 
-    private:
+        virtual ~ArduinoPwmControllerProvider()
+        {
+        }
 
-        //
-        // Non-API
-        //
+    internal:
+        ArduinoPwmControllerProvider() 
+        {
+            Initialize();
+        }
+
+    private:
         void Initialize();
 
+    private:
         static UsbSerial ^_Usb;
         static RemoteDevice ^_Arduino;
         static bool _Connected;
