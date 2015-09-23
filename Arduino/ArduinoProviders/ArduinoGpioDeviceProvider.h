@@ -28,7 +28,7 @@ namespace ArduinoProviders
             Initialize();
         }
 
-        virtual ~ArduinoGpioPinProvider();
+        virtual ~ArduinoGpioPinProvider() {}
 
         // Inherited via IGpioPinProvider
         virtual event TypedEventHandler<IGpioPinProvider^, GpioPinProviderValueChangedEventArgs^>^ ValueChanged;
@@ -56,9 +56,6 @@ namespace ArduinoProviders
         virtual ProviderGpioPinValue Read();
 
     private:
-        //
-        // Non API
-        //
         void Initialize();
         void OnValueChanged(GpioPinProviderValueChangedEventArgs ^args);
         void OnDigitalPinUpdated(unsigned char pin, PinState value);

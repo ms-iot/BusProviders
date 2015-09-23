@@ -11,30 +11,6 @@ bool ArduinoPwmControllerProvider::_Connected = false;
 
 int _ArduinoPwmPins[] = { 3,5,6,9,10,11 };
 
-ArduinoPwmControllerProvider::~ArduinoPwmControllerProvider()
-{
-}
-
-void ArduinoPwmControllerProvider::AcquirePin(int /*pin*/)
-{
-    // No-op
-}
-
-void ArduinoPwmControllerProvider::ReleasePin(int /*pin*/)
-{
-    // No-op
-}
-
-void ArduinoPwmControllerProvider::EnablePin(int /*pin*/)
-{
-    // No-op
-}
-
-void ArduinoPwmControllerProvider::DisablePin(int /*pin*/)
-{
-    // No-op
-}
-
 void ArduinoPwmControllerProvider::SetPulseParameters(int pin, double dutyCycle, bool invertPolarity)
 {
     if (!_Connected)

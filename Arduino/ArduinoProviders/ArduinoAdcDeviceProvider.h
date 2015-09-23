@@ -48,21 +48,15 @@ namespace ArduinoProviders
         virtual int ReadValue(int channelNumber);
 
     private:
-
-        //
-        // Non-API
-        //
         void Initialize();
 
+    private:
         static UsbSerial ^_Usb;
         static RemoteDevice ^_Arduino;
         static bool _Connected;
 
         static const unsigned short _ArduinoResolutionBits = 10;
         static const unsigned short _ArduinoChannelCount = 6;
-
-        //static const unsigned char _ArduinoPinCount = 28;
-        //bool _ArduinoPinAcquired[_ArduinoPinCount];
     };
 
     public ref class ArduinoAdcProvider sealed : public IAdcProvider

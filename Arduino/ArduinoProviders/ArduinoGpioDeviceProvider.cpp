@@ -8,10 +8,6 @@ using namespace Platform::Collections;
 UsbSerial ^ArduinoGpioControllerProvider::_Usb = nullptr;
 RemoteDevice ^ArduinoGpioControllerProvider::_Arduino = nullptr;
 
-ArduinoGpioPinProvider::~ArduinoGpioPinProvider()
-{
-}
-
 void ArduinoGpioPinProvider::SetDriveMode(
     ProviderGpioPinDriveMode value
     )
