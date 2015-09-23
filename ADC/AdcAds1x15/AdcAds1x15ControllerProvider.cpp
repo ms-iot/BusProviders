@@ -48,6 +48,8 @@ AdcAds1x15ControllerProvider::AdcAds1x15ControllerProvider(Ads1x15Type type)
 		bitShift = 4;
 	}
 
+    HANDLE foo;
+
 	DeviceInformationCollection^ devices = create_task(DeviceInformation::FindAllAsync(aqs)).get();
 
 	DeviceInformation^ di = devices->GetAt(0);
