@@ -1,5 +1,5 @@
 # Microsoft.Iot.Lightning.Providers
-Repository for Windows IoT Core Bus Provider Libraries for 
+ Windows IoT Core Bus Provider Library for Lightning. 
 
 ## Using the Microsoft.Iot.Lightning.Providers library and sample code
 The Microsoft.Iot.Lightning.Providers library provides a set of Windows.Devices.*Providers WinRT APIs enabling apps to use the new Lightning driver to communicate with and control GPIO, I2C and SPI devices.
@@ -49,7 +49,7 @@ SpiController controller =
 SpiDevice SpiDisplay = controller.GetDevice(settings); 
 ```
 Checking for the Lightning (DMAP) driver
-Itís also a good practice to verify if the required Lightning provider is installed before calling the provider APIs. That way dual-mode code could be written; e.g. hereís the code for GPIO. The same pattern can be used for all other providers:
+It‚Äôs also a good practice to verify if the required Lightning provider is installed before calling the provider APIs. That way dual-mode code could be written; e.g. here‚Äôs the code for GPIO. The same pattern can be used for all other providers:
 ```C#
 GpioController gpioController;
 bool isLightningEnabled = Provider.IsLightningEnabled;
@@ -76,4 +76,4 @@ Additionally, the following version of the Windows SDK should be available for b
 
 ## Runtime Requirements
 The APIs in the Lightning Provider library require the Lightning (DMAP) driver to be enabled on the target device. Both Raspberry Pi2 and MinnowBoard Max have the driver available, but not enabled by default. The driver can be enabled using the Windows Devices Web Portal.
-Refer to the ìEnabling Lightning Driverî <link tbd> guide for additional information on how to enable the DMAP driver.
+Refer to the ‚ÄúEnabling Lightning Driver‚Äù <link tbd> guide for additional information on how to enable the DMAP driver.
