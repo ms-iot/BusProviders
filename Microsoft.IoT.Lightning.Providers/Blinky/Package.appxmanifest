@@ -8,15 +8,15 @@
   IgnorableNamespaces="uap mp iot">
 
   <Identity
-    Name="ce88ee3f-c2d3-4148-9fd4-73d6a075b6b5"
-    Publisher="CN=msaleh"
+    Name="Blinky-uwp"
+    Publisher="CN=Microsoft"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="ce88ee3f-c2d3-4148-9fd4-73d6a075b6b5" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Blinky</DisplayName>
-    <PublisherDisplayName>msaleh</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

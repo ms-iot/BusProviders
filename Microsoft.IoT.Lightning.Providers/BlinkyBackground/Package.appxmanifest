@@ -9,14 +9,14 @@
 
   <Identity
     Name="BlinkyBackground-uwp"
-    Publisher="CN=bfjelds"
+    Publisher="CN=Microsoft"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="0e467840-8229-40b0-a560-07ea7b1ce713" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>BlinkyBackground</DisplayName>
-    <PublisherDisplayName>bfjelds</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

@@ -8,15 +8,15 @@
   IgnorableNamespaces="uap mp iot">
 
   <Identity
-    Name="cf121ea3-8061-4317-9efc-3a36866783b7"
-    Publisher="CN=IoTTools"
+    Name="SPIDisplay-uwp"
+    Publisher="CN=Microsoft"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="cf121ea3-8061-4317-9efc-3a36866783b7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>SPIDisplay</DisplayName>
-    <PublisherDisplayName>IoTTools</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
