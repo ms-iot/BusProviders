@@ -1,22 +1,15 @@
 // Copyright (c) Microsoft. All rights reserved.
 #include "pch.h"  
-#include "ArduinoGpioDeviceProvider.h"  
+#include "ArduinoGpioDeviceProvider.h"
+#include "ArduinoConnection.h"
 
 using namespace ArduinoProviders;
 using namespace Platform::Collections;
-
-UsbSerial ^ArduinoGpioControllerProvider::_Usb = nullptr;
-RemoteDevice ^ArduinoGpioControllerProvider::_Arduino = nullptr;
 
 void ArduinoGpioPinProvider::SetDriveMode(
     ProviderGpioPinDriveMode value
     )
 {
-    if (!_Connected)
-    {
-        throw ref new Platform::AccessDeniedException();
-    }
-
     if (_DriveMode != value)
     {
         switch (value)
@@ -39,11 +32,6 @@ void ArduinoGpioPinProvider::Write(
     ProviderGpioPinValue value
     )
 {
-    if (!_Connected)
-    {
-        throw ref new Platform::AccessDeniedException();
-    }
-
     _Arduino->digitalWrite(
         _PinNumber, 
         (value == ProviderGpioPinValue::High) ? 
@@ -53,11 +41,6 @@ void ArduinoGpioPinProvider::Write(
 
 ProviderGpioPinValue ArduinoGpioPinProvider::Read()
 {
-    if (!_Connected)
-    {
-        throw ref new Platform::AccessDeniedException();
-    }
-
     PinState state = _Arduino->digitalRead(_PinNumber);
     return (state == PinState::HIGH) ?
         ProviderGpioPinValue::High :
@@ -71,21 +54,17 @@ void ArduinoGpioPinProvider::OnValueChanged(GpioPinProviderValueChangedEventArgs
 
 void ArduinoGpioPinProvider::Initialize()
 {
-    _Arduino = ArduinoGpioControllerProvider::Arduino;
+    _Arduino = ArduinoConnection::Arduino;
+
     _Arduino->DigitalPinUpdated +=
         ref new Microsoft::Maker::RemoteWiring::DigitalPinUpdatedCallback(this, &ArduinoGpioPinProvider::OnDigitalPinUpdated);
 
     auto mode = _Arduino->getPinMode(_PinNumber);
-    this->SetDriveMode(
-        (mode == PinMode::INPUT) ? 
-            ProviderGpioPinDriveMode::Input : 
-            ProviderGpioPinDriveMode::Output);
+    SetDriveMode(
+        (mode == PinMode::INPUT) ?
+        ProviderGpioPinDriveMode::Input :
+        ProviderGpioPinDriveMode::Output);
 
-    _Arduino->DeviceReady +=
-        ref new RemoteDeviceConnectionCallback([this]() -> void
-    {
-        _Connected = true;
-    });
 }
 
 void ArduinoGpioPinProvider::OnDigitalPinUpdated(unsigned char pin, PinState value)
@@ -97,22 +76,6 @@ void ArduinoGpioPinProvider::OnDigitalPinUpdated(unsigned char pin, PinState val
             ProviderGpioPinEdge::RisingEdge;
         ValueChanged(this, ref new GpioPinProviderValueChangedEventArgs(edge));
     }
-}
-
-RemoteDevice^ ArduinoGpioControllerProvider::Arduino::get()
-{
-    if (_Arduino == nullptr)
-    {
-        _Usb = ref new UsbSerial("VID_2341", "PID_0043");
-
-        int baudRate = 115200;
-        _Usb->begin(baudRate, SerialConfig::SERIAL_8N1);
-
-
-        _Arduino = ref new RemoteDevice(_Usb);
-    }
-    return _Arduino;
-
 }
 
 IGpioPinProvider^ ArduinoGpioControllerProvider::OpenPinProvider(

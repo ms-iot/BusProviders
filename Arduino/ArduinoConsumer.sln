@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Microsoft.Maker.Firmata", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Microsoft.Maker.RemoteWiring", "..\..\remote-wiring\Microsoft.Maker.win10\Microsoft.Maker.RemoteWiring\Microsoft.Maker.RemoteWiring.vcxproj", "{5A8B1BB1-7CD5-47C4-A1F7-D7BCF5FACAD1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoConsumerCpp", "ArduinoConsumerCpp\ArduinoConsumerCpp.vcxproj", "{F297B44D-700E-4F77-996A-0374E80E9419}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -88,6 +90,24 @@ Global
 		{5A8B1BB1-7CD5-47C4-A1F7-D7BCF5FACAD1}.Release|x64.Build.0 = Release|x64
 		{5A8B1BB1-7CD5-47C4-A1F7-D7BCF5FACAD1}.Release|x86.ActiveCfg = Release|Win32
 		{5A8B1BB1-7CD5-47C4-A1F7-D7BCF5FACAD1}.Release|x86.Build.0 = Release|Win32
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Debug|ARM.ActiveCfg = Debug|ARM
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Debug|ARM.Build.0 = Debug|ARM
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Debug|ARM.Deploy.0 = Debug|ARM
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Debug|x64.ActiveCfg = Debug|x64
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Debug|x64.Build.0 = Debug|x64
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Debug|x64.Deploy.0 = Debug|x64
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Debug|x86.ActiveCfg = Debug|Win32
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Debug|x86.Build.0 = Debug|Win32
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Debug|x86.Deploy.0 = Debug|Win32
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Release|ARM.ActiveCfg = Release|ARM
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Release|ARM.Build.0 = Release|ARM
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Release|ARM.Deploy.0 = Release|ARM
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Release|x64.ActiveCfg = Release|x64
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Release|x64.Build.0 = Release|x64
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Release|x64.Deploy.0 = Release|x64
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Release|x86.ActiveCfg = Release|Win32
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Release|x86.Build.0 = Release|Win32
+		{F297B44D-700E-4F77-996A-0374E80E9419}.Release|x86.Deploy.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

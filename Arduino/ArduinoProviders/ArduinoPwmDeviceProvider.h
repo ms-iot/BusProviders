@@ -17,19 +17,19 @@ namespace ArduinoProviders
         // Inherited via IPwmControllerProvider
         virtual property double ActualFrequency
         {
-            double get() { throw ref new Platform::Exception(E_NOTIMPL, L"Modifying the frequency is not supported"); }
+            double get() { return _ArduinoPwmMinFrequency; }
         }
         virtual property double MaxFrequency
         {
-            double get() { throw ref new Platform::Exception(E_NOTIMPL, L"Modifying the frequency is not supported"); }
+            double get() { return _ArduinoPwmMaxFrequency; }
         }
         virtual property double MinFrequency
         {
-            double get() { throw ref new Platform::Exception(E_NOTIMPL, L"Modifying the frequency is not supported"); }
+            double get() { return _ArduinoPwmMinFrequency; }
         }
         virtual property int PinCount
         {
-            int get() { throw ref new Platform::Exception(E_NOTIMPL, L"Requesting the PinCount is not supported"); }
+            int get() { return _ArduinoPwmPinCount; }
         }
 
         virtual double SetDesiredFrequency(double frequency)
@@ -58,9 +58,12 @@ namespace ArduinoProviders
         void Initialize();
 
     private:
-        static UsbSerial ^_Usb;
-        static RemoteDevice ^_Arduino;
-        static bool _Connected;
+        RemoteDevice ^_Arduino;
+
+        //static const unsigned short _ArduinoPwmPinMap[6] = { 3, 5, 6, 9, 10, 11 };
+        static const unsigned short _ArduinoPwmPinCount = 6;
+        static const unsigned short _ArduinoPwmMaxFrequency = 980;
+        static const unsigned short _ArduinoPwmMinFrequency = 490;
     };
 
     public ref class ArduinoPwmProvider sealed : public IPwmProvider

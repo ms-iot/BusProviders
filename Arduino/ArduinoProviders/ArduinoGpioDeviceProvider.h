@@ -68,8 +68,6 @@ namespace ArduinoProviders
         ProviderGpioSharingMode _SharingMode;
         ProviderGpioPinDriveMode _DriveMode;
         RemoteDevice ^_Arduino;
-        bool _Connected;
-
     };
 
     ref class ArduinoGpioControllerProvider sealed : public IGpioControllerProvider
@@ -79,15 +77,8 @@ namespace ArduinoProviders
         virtual property int PinCount { int get() { return _ArduinoPinCount; } }
         virtual IGpioPinProvider^ OpenPinProvider(int, ProviderGpioSharingMode);
 
-        static property RemoteDevice^ Arduino { RemoteDevice^ get(); }
-
     private:
-
-        static UsbSerial ^_Usb;
-        static RemoteDevice ^_Arduino;
-
         static const unsigned short _ArduinoPinCount = 20;
-
     };
 
     public ref class ArduinoGpioProvider sealed : public IGpioProvider

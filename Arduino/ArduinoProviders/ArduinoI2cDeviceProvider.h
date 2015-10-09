@@ -11,6 +11,8 @@ using namespace Windows::Foundation;
 
 using namespace Microsoft::Maker::Serial;
 using namespace Microsoft::Maker::Firmata;
+using namespace Microsoft::Maker::RemoteWiring;
+using namespace Microsoft::Maker::RemoteWiring::I2c;
 using namespace Windows::Storage::Streams;
 
 namespace ArduinoProviders
@@ -41,29 +43,19 @@ namespace ArduinoProviders
         ArduinoI2cDeviceProvider(ProviderI2cConnectionSettings ^settings);
 
     private:
-        void SendI2cSysex(
-            const uint8_t address,
-            const uint8_t rw_mask,
-            const uint8_t len,
-            uint8_t *data);
-
-
-    private:
         ProviderI2cConnectionSettings ^_ConnectionSettings;
 
-        UsbSerial ^_Usb;
-        UwpFirmata ^_Firmata;
+        RemoteDevice ^_Arduino;
 
-        std::map<unsigned char, DataReader^> _I2cData;
+        std::map<unsigned char, Platform::Array<unsigned char>^> _I2cData;
         std::map<unsigned char, unsigned char> _I2cRegisters;
 
-        uint32_t _ReadTimeout;
         HANDLE _DataRead;
+        std::mutex _DataReaderMutex;
     };
 
     ref class ArduinoI2cControllerProvider sealed : public II2cControllerProvider
     {
-
     public:
         // Inherited via II2cControllerProvider
         virtual II2cDeviceProvider ^ GetDeviceProvider(ProviderI2cConnectionSettings ^settings);

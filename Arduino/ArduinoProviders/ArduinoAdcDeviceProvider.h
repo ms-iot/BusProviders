@@ -34,7 +34,7 @@ namespace ArduinoProviders
             return (channelMode == ProviderAdcChannelMode::SingleEnded);
         }
 
-        virtual void AcquireChannel(int channel) { /*no op*/ }
+        virtual void AcquireChannel(int channel);
         virtual void ReleaseChannel(int channel) { /*no op*/ }
         virtual int ReadValue(int channelNumber);
 
@@ -52,9 +52,7 @@ namespace ArduinoProviders
         void Initialize();
 
     private:
-        static UsbSerial ^_Usb;
-        static RemoteDevice ^_Arduino;
-        static bool _Connected;
+        RemoteDevice ^_Arduino;
 
         static const unsigned short _ArduinoResolutionBits = 10;
         static const unsigned short _ArduinoChannelCount = 6;

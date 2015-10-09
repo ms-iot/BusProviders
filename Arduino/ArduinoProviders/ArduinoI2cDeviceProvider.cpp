@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 #include "pch.h"  
-#include "ArduinoI2cDeviceProvider.h"  
+#include "ArduinoI2cDeviceProvider.h"
+#include "ArduinoConnection.h"
 
 using namespace ArduinoProviders;
 using namespace Platform::Collections;
@@ -9,37 +10,33 @@ ArduinoI2cDeviceProvider::ArduinoI2cDeviceProvider(ProviderI2cConnectionSettings
 {
     _ConnectionSettings = settings;
 
-    _ReadTimeout = 1000; //TODO: avoid INFINITE timeout ... give it a second to respond?
     _DataRead = CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
 
-    _Usb = ref new UsbSerial("VID_2341", "PID_0043");
+    _Arduino = ArduinoConnection::Arduino;
 
-    int baudRate = 115200;
-    _Usb->begin(baudRate, SerialConfig::SERIAL_8N1);
+    _Arduino->I2c->I2cReplyEvent +=
+            ref new I2cReplyCallback(
+                [this](
+                    uint8_t address_, 
+                    uint8_t reg_, 
+                    Windows::Storage::Streams::DataReader ^response
+                    ) -> void 
+                {
+                    std::lock_guard<std::mutex> lock(_DataReaderMutex);
 
-    _Firmata = ref new UwpFirmata();
-    _Firmata->begin(_Usb);
+                    auto byteArrayCopy = ref new Platform::Array<unsigned char>(response->UnconsumedBufferLength);
+                    response->ReadBytes(byteArrayCopy);
+                    _I2cData.insert_or_assign(address_, byteArrayCopy);
+                    _I2cRegisters.insert_or_assign(address_, reg_);
+                    SetEvent(_DataRead);
+                });
 
-    _Firmata->I2cReplyReceived += 
-        ref new I2cReplyCallbackFunction(
-            [this](
-                UwpFirmata ^caller, 
-                I2cCallbackEventArgs^ args) -> void 
-            {
-                auto address = args->getAddress();
-
-                _I2cData.insert_or_assign(address, DataReader::FromBuffer(args->getDataBuffer()));
-                _I2cRegisters.insert_or_assign(address, args->getRegister());
-                SetEvent(_DataRead);
-            });
+    _Arduino->I2c->enable(500);
 }
 
 ArduinoI2cDeviceProvider::~ArduinoI2cDeviceProvider()
 {
     CloseHandle(_DataRead);
-    _Firmata->finish();
-    _Usb->end();
-
 }
 
 Platform::String ^ ArduinoI2cDeviceProvider::DeviceId::get()
@@ -51,7 +48,13 @@ ProviderI2cTransferResult ArduinoI2cDeviceProvider::WritePartial(
     const Platform::Array<unsigned char> ^buffer
     )
 {
-    SendI2cSysex(_ConnectionSettings->SlaveAddress, 0, buffer->Length, buffer->begin());
+    _Arduino->I2c->beginTransmission(_ConnectionSettings->SlaveAddress);
+    for (size_t i = 0; i < buffer->Length; ++i)
+    {
+        _Arduino->I2c->write(buffer->begin()[i]);
+    }
+    _Arduino->I2c->endTransmission();
+
     ProviderI2cTransferResult result;
     result.BytesTransferred = buffer->Length;
     result.Status = ProviderI2cTransferStatus::FullTransfer;
@@ -62,25 +65,30 @@ ProviderI2cTransferResult ArduinoI2cDeviceProvider::ReadPartial(
     Platform::WriteOnlyArray<unsigned char> ^buffer
     )
 {
-    uint8_t numBytes = buffer->Length;
-
     ResetEvent(_DataRead);
-    SendI2cSysex(_ConnectionSettings->SlaveAddress, 0x08, 1, &numBytes);
+    _Arduino->I2c->requestFrom(_ConnectionSettings->SlaveAddress, buffer->Length);
 
-    DWORD dwWaitResult = WaitForSingleObjectEx(_DataRead, _ReadTimeout, true);
+    DWORD dwWaitResult = WaitForSingleObjectEx(_DataRead, INFINITE, true);
 
     ProviderI2cTransferResult result;
     if (dwWaitResult == WAIT_OBJECT_0 && 
         (_I2cData.find(_ConnectionSettings->SlaveAddress) != _I2cData.end()))
     {
+        std::lock_guard<std::mutex> lock(_DataReaderMutex);
+
         // fill buffer with i2c reply data
         auto foundData = _I2cData.find(_ConnectionSettings->SlaveAddress);
         auto data = foundData->second;
-
-        data->ReadBytes(buffer);
+        auto dataLength = data->Length;
+        auto expectedLength = buffer->Length;
+ 
+        for (unsigned int i = 0; i < ((dataLength < expectedLength) ? dataLength : expectedLength); i++)
+        {
+            buffer[i] = data[i];
+        }
         
-        result.BytesTransferred = buffer->Length;
-        result.Status = (result.BytesTransferred == numBytes) ?
+        result.BytesTransferred = dataLength;
+        result.Status = (dataLength == expectedLength) ?
             result.Status = ProviderI2cTransferStatus::FullTransfer :
             result.Status = ProviderI2cTransferStatus::PartialTransfer;
     }
@@ -115,39 +123,6 @@ ProviderI2cTransferResult ArduinoI2cDeviceProvider::WriteReadPartial(
             result.Status = ProviderI2cTransferStatus::PartialTransfer;
     }
     return result;
-}
-
-void ArduinoI2cDeviceProvider::SendI2cSysex(
-    const uint8_t address,
-    const uint8_t rw_mask,
-    const uint8_t len,
-    uint8_t *data
-    )
-{
-    _Firmata->lock();
-    try
-    {
-        _Firmata->write(static_cast<uint8_t>(Command::START_SYSEX));
-        _Firmata->write(static_cast<uint8_t>(SysexCommand::I2C_REQUEST));
-        _Firmata->write(address);
-        _Firmata->write(rw_mask);
-
-        if (data != nullptr)
-        {
-            for (size_t i = 0; i < len; ++i)
-            {
-                _Firmata->sendValueAsTwo7bitBytes(data[i]);
-            }
-        }
-
-        _Firmata->write(static_cast<uint8_t>(Command::END_SYSEX));
-        _Firmata->flush();
-        _Firmata->unlock();
-    }
-    catch (...)
-    {
-        _Firmata->unlock();
-    }
 }
 
 II2cDeviceProvider ^ ArduinoI2cControllerProvider::GetDeviceProvider(
