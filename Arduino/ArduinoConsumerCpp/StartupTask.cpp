@@ -1,0 +1,135 @@
+#include "pch.h"
+#include "StartupTask.h"
+
+using namespace ArduinoConsumerCpp;
+
+using namespace Platform;
+using namespace Windows::ApplicationModel::Background;
+using namespace Windows::Foundation;
+using namespace Windows::Devices::Pwm;
+using namespace Windows::Devices::Adc;
+using namespace Windows::Devices::Gpio;
+using namespace Windows::Devices::I2c;
+using namespace Windows::System::Threading;
+using namespace concurrency;
+
+// The Background Application template is documented at http://go.microsoft.com/fwlink/?LinkID=533884&clcid=0x409
+
+void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
+{
+    _Deferral = taskInstance->GetDeferral();
+
+    Windows::Devices::LowLevelDevicesController::DefaultProvider = ref new ArduinoProviders::ArduinoProvider();
+
+    auto pwmController = concurrency::create_task(PwmController::GetDefaultAsync()).get();
+    _PwmPin = pwmController->OpenPin(3);
+    _PwmPin->SetActiveDutyCyclePercentage(0.0);
+    _PwmPin->Start();
+
+    _FanOn = true;
+
+    TimeSpan interval;
+    interval.Duration = 50 * 1000 * 10;
+
+    _PwmTimer = ThreadPoolTimer::CreatePeriodicTimer(
+        ref new TimerElapsedHandler([this, pwmController](ThreadPoolTimer ^timer)
+        {
+            std::lock_guard<std::mutex> lock(_Mutex);
+
+            if (!_FanOn || _TemperatureThreshold >= _CurrentTemperature)
+            {
+                // if the fan is off or the ambient temperature is at or below the threshold, turn off the fan
+                _PwmPin->SetActiveDutyCyclePercentage(0.0);
+            }
+            else
+            {
+                // if the ambient temperature is above the threshold, turn on the fan
+                _PwmPin->SetActiveDutyCyclePercentage(2.0 / (1000.0 / pwmController->ActualFrequency));
+            }
+        }), 
+        interval);
+
+    auto adcController = concurrency::create_task(Windows::Devices::Adc::AdcController::GetDefaultAsync()).get();
+    _AdcChannel = adcController->OpenChannel(1);
+    _AdcTimer = ThreadPoolTimer::CreatePeriodicTimer(
+        ref new TimerElapsedHandler([this](ThreadPoolTimer ^timer)
+        {
+            if (_FanOn)
+            {
+                std::lock_guard<std::mutex> lock(_Mutex);
+
+                // set new threshold between min and max based on potentiometer reading
+                _TemperatureThreshold =
+                    std::round(
+                        double(_TemperatureRangeMin) +
+                        double(_TemperatureRangeMax - _TemperatureRangeMin) * double(_AdcChannel->ReadValue()) / double(_PotentiometerMax - _PotentiometerMin));
+            }
+        }),
+        interval);
+
+    auto i2cController = concurrency::create_task(Windows::Devices::I2c::I2cController::GetDefaultAsync()).get();
+    auto i2cConnectionSettings = ref new Windows::Devices::I2c::I2cConnectionSettings(0x40);
+    _I2cDevice = i2cController->GetDevice(i2cConnectionSettings);
+    _I2cTimer = ThreadPoolTimer::CreatePeriodicTimer(
+        ref new TimerElapsedHandler([this](ThreadPoolTimer ^timer)
+        {
+            if (_FanOn)
+            {
+                std::lock_guard<std::mutex> lock(_Mutex);
+
+                auto command = ref new Platform::Array<byte>(1);
+                command[0] = 0xE3;
+
+                auto data = ref new Array<byte>(2);
+                _I2cDevice->WriteRead(command, data);
+
+                auto rawReading = data[0] << 8 | data[1];
+                auto ratio = rawReading / (float)65536;
+                _CurrentTemperature = std::round((-46.85 + (175.72 * ratio)) * 9.0 / 5.0 + 32.0);
+            }
+        }),
+        interval);
+
+
+    auto gpioController = concurrency::create_task(Windows::Devices::Gpio::GpioController::GetDefaultAsync()).get();
+    _LedPin = gpioController->OpenPin(7);
+    _LedPin->SetDriveMode(Windows::Devices::Gpio::GpioPinDriveMode::Output);
+    _LedPin->Write(
+        _FanOn ?
+        Windows::Devices::Gpio::GpioPinValue::Low :
+        Windows::Devices::Gpio::GpioPinValue::High
+        );
+
+    _ButtonPin = gpioController->OpenPin(8);
+    _ButtonPin->SetDriveMode(Windows::Devices::Gpio::GpioPinDriveMode::Input);
+    _ButtonPin->ValueChanged +=
+        ref new Windows::Foundation::TypedEventHandler<Windows::Devices::Gpio::GpioPin^, Windows::Devices::Gpio::GpioPinValueChangedEventArgs^>(
+            [this](
+                Windows::Devices::Gpio::GpioPin ^sender, 
+                Windows::Devices::Gpio::GpioPinValueChangedEventArgs ^e) 
+        {
+            if (e->Edge == Windows::Devices::Gpio::GpioPinEdge::FallingEdge)
+            {
+                _FanOn = !_FanOn;
+                _LedPin->Write(
+                    _FanOn ?
+                    Windows::Devices::Gpio::GpioPinValue::Low :
+                    Windows::Devices::Gpio::GpioPinValue::High
+                    );
+            }
+            
+        });
+
+    //while (true)
+    {
+        Sleep(1000);
+    }
+}
+
+StartupTask::~StartupTask()
+{
+    if (_PwmPin)
+    {
+        _PwmPin->Stop();
+    }
+}
