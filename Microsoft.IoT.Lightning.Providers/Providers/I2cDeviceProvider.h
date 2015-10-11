@@ -6,18 +6,18 @@ namespace Microsoft {
     namespace IoT {
         namespace Lightning {
             namespace Providers {
-                public ref class I2cProvider sealed : public II2cProvider
+                public ref class LightningI2cProvider sealed : public II2cProvider
                 {
                 public:
                     virtual IAsyncOperation<IVectorView<II2cControllerProvider^>^>^ GetControllersAsync();
                     static II2cProvider^ GetI2cProvider();
 
                 private:
-                    I2cProvider() { }
+                    LightningI2cProvider() { }
                     static II2cProvider^ providerSingleton;
                 };
 
-                public ref class I2cControllerProvider sealed : public II2cControllerProvider
+                public ref class LightningI2cControllerProvider sealed : public II2cControllerProvider
                 {
 
                 public:
@@ -25,15 +25,15 @@ namespace Microsoft {
                     virtual II2cDeviceProvider ^ GetDeviceProvider(ProviderI2cConnectionSettings ^settings);
 
                 internal:
-                    explicit I2cControllerProvider(ULONG busNumber) : _busNumber(busNumber) { }
+                    explicit LightningI2cControllerProvider(ULONG busNumber) : _busNumber(busNumber) { }
 
                 private:
-                    I2cControllerProvider() { }
+                    LightningI2cControllerProvider() { }
                     /// The bus number for the I2C Controller associated with this object.
                     ULONG _busNumber;
                 };
 
-                public ref class I2cDeviceProvider sealed : public II2cDeviceProvider
+                public ref class LightningI2cDeviceProvider sealed : public II2cDeviceProvider
                 {
 
                 public:
@@ -72,10 +72,10 @@ namespace Microsoft {
                         throw ref new Platform::NotImplementedException();
                     }
 
-                    virtual ~I2cDeviceProvider();
+                    virtual ~LightningI2cDeviceProvider();
 
                 internal:
-                    I2cDeviceProvider(ProviderI2cConnectionSettings ^settings, ULONG busNumber);
+                    LightningI2cDeviceProvider(ProviderI2cConnectionSettings ^settings, ULONG busNumber);
 
                 private:
                     ProviderI2cConnectionSettings ^_ConnectionSettings;

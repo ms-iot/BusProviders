@@ -13,7 +13,7 @@ namespace Microsoft {
         namespace Lightning {
             namespace Providers {
 
-                public ref class Provider sealed : public ILowLevelDevicesAggregateProvider
+                public ref class LightningProvider sealed : public ILowLevelDevicesAggregateProvider
                 {
                 public:
 
@@ -48,8 +48,15 @@ namespace Microsoft {
                         bool get();
                     }
 
+                    static ILowLevelDevicesAggregateProvider^ GetAggregateProvider();
+
                 internal:
                     static void ThrowError(HRESULT hr, LPCWSTR errorMessage);
+               
+                private:
+                    LightningProvider() { }
+                    static ILowLevelDevicesAggregateProvider^ providerSingleton;
+
                 };
             }
         }

@@ -9,28 +9,28 @@
 
 using namespace Microsoft::IoT::Lightning::Providers;
 
-#pragma region I2cProvider
+#pragma region LightningI2cProvider
 
-II2cProvider^ I2cProvider::providerSingleton = nullptr;
+II2cProvider^ LightningI2cProvider::providerSingleton = nullptr;
 
-II2cProvider ^ I2cProvider::GetI2cProvider()
+II2cProvider ^ LightningI2cProvider::GetI2cProvider()
 {
     if (providerSingleton == nullptr)
     {
-        providerSingleton = ref new I2cProvider();
+        providerSingleton = ref new LightningI2cProvider();
     }
 
     return providerSingleton;
 }
 
-IAsyncOperation<IVectorView<II2cControllerProvider^>^>^ I2cProvider::GetControllersAsync(
+IAsyncOperation<IVectorView<II2cControllerProvider^>^>^ LightningI2cProvider::GetControllersAsync(
     void
     )
 {
     return concurrency::create_async([]() -> IVectorView<II2cControllerProvider^>^ {
 
         auto controllerCollection = ref new Vector<II2cControllerProvider^>();
-        controllerCollection->Append(ref new I2cControllerProvider(EXTERNAL_I2C_BUS));
+        controllerCollection->Append(ref new LightningI2cControllerProvider(EXTERNAL_I2C_BUS));
 
         // RPI2 has a second I2C bus
 
@@ -39,7 +39,7 @@ IAsyncOperation<IVectorView<II2cControllerProvider^>^>^ I2cProvider::GetControll
 
         if (SUCCEEDED(hr) && board == BoardPinsClass::BOARD_TYPE::PI2_BARE)
         {
-            controllerCollection->Append(ref new I2cControllerProvider(SECOND_EXTERNAL_I2C_BUS));
+            controllerCollection->Append(ref new LightningI2cControllerProvider(SECOND_EXTERNAL_I2C_BUS));
         }
 
         return controllerCollection->GetView();
@@ -49,20 +49,20 @@ IAsyncOperation<IVectorView<II2cControllerProvider^>^>^ I2cProvider::GetControll
 
 #pragma endregion
 
-#pragma region I2cControllerProvider
+#pragma region LightningI2cControllerProvider
 
-II2cDeviceProvider ^ I2cControllerProvider::GetDeviceProvider(
+II2cDeviceProvider ^ LightningI2cControllerProvider::GetDeviceProvider(
     ProviderI2cConnectionSettings ^settings
     )
 {
-    return ref new I2cDeviceProvider(settings, _busNumber);
+    return ref new LightningI2cDeviceProvider(settings, _busNumber);
 }
 
 #pragma endregion
 
-#pragma region I2cDeviceProvider
+#pragma region LightningI2cDeviceProvider
 
-I2cDeviceProvider::I2cDeviceProvider(ProviderI2cConnectionSettings ^settings, ULONG busNumber) : _busNumber(busNumber)
+LightningI2cDeviceProvider::LightningI2cDeviceProvider(ProviderI2cConnectionSettings ^settings, ULONG busNumber) : _busNumber(busNumber)
 {
     _ConnectionSettings = settings;
 
@@ -71,7 +71,7 @@ I2cDeviceProvider::I2cDeviceProvider(ProviderI2cConnectionSettings ^settings, UL
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"An error occurred determining board type.");
+        LightningProvider::ThrowError(hr, L"An error occurred determining board type.");
     }
 
     if (board == BoardPinsClass::BOARD_TYPE::MBM_BARE)
@@ -98,14 +98,14 @@ I2cDeviceProvider::I2cDeviceProvider(ProviderI2cConnectionSettings ^settings, UL
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"An error occurred while configuring pins for I2c");
+        LightningProvider::ThrowError(hr, L"An error occurred while configuring pins for I2c");
     }
 
     hr = _I2cController->begin(busNumber);
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"An error occurred while initializing the I2c controller");
+        LightningProvider::ThrowError(hr, L"An error occurred while initializing the I2c controller");
     }
 
     _i2cTransaction.reset(new I2cTransactionClass());
@@ -113,7 +113,7 @@ I2cDeviceProvider::I2cDeviceProvider(ProviderI2cConnectionSettings ^settings, UL
     hr = _i2cTransaction->setAddress(_ConnectionSettings->SlaveAddress);
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Could not set i2c salve address.");
+        LightningProvider::ThrowError(hr, L"Could not set i2c salve address.");
     }
 
     if (_ConnectionSettings->BusSpeed == ProviderI2cBusSpeed::FastMode)
@@ -123,7 +123,7 @@ I2cDeviceProvider::I2cDeviceProvider(ProviderI2cConnectionSettings ^settings, UL
 
 }
 
-ProviderI2cTransferResult Microsoft::IoT::Lightning::Providers::I2cDeviceProvider::WritePartial(const Platform::Array<unsigned char>^ buffer)
+ProviderI2cTransferResult LightningI2cDeviceProvider::WritePartial(const Platform::Array<unsigned char>^ buffer)
 {
     ProviderI2cTransferResult result;
     result.BytesTransferred = 0;
@@ -136,7 +136,7 @@ ProviderI2cTransferResult Microsoft::IoT::Lightning::Providers::I2cDeviceProvide
     {
         // Clean out the transaction so it can be used again in the future.
         _i2cTransaction->reset();
-        Provider::ThrowError(hr, L"Could not queue I2c transaction.");
+        LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
     }
 
     hr = _i2cTransaction->execute(_I2cController.get());
@@ -170,7 +170,7 @@ ProviderI2cTransferResult Microsoft::IoT::Lightning::Providers::I2cDeviceProvide
     return result;
 }
 
-ProviderI2cTransferResult Microsoft::IoT::Lightning::Providers::I2cDeviceProvider::ReadPartial(Platform::WriteOnlyArray<unsigned char>^ buffer)
+ProviderI2cTransferResult LightningI2cDeviceProvider::ReadPartial(Platform::WriteOnlyArray<unsigned char>^ buffer)
 {
     ProviderI2cTransferResult result;
     result.BytesTransferred = 0;
@@ -182,7 +182,7 @@ ProviderI2cTransferResult Microsoft::IoT::Lightning::Providers::I2cDeviceProvide
     {
         // Clean out the transaction so it can be used again in the future.
         _i2cTransaction->reset();
-        Provider::ThrowError(hr, L"Could not queue I2c transaction.");
+        LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
     }
 
     hr = _i2cTransaction->execute(_I2cController.get());
@@ -215,7 +215,7 @@ ProviderI2cTransferResult Microsoft::IoT::Lightning::Providers::I2cDeviceProvide
     return result;
 }
 
-ProviderI2cTransferResult I2cDeviceProvider::WriteReadPartial(const Platform::Array<unsigned char>^ writeBuffer, Platform::WriteOnlyArray<unsigned char>^ readBuffer)
+ProviderI2cTransferResult LightningI2cDeviceProvider::WriteReadPartial(const Platform::Array<unsigned char>^ writeBuffer, Platform::WriteOnlyArray<unsigned char>^ readBuffer)
 {
     ProviderI2cTransferResult result;
     result.BytesTransferred = 0;
@@ -228,7 +228,7 @@ ProviderI2cTransferResult I2cDeviceProvider::WriteReadPartial(const Platform::Ar
     {
         // Clean out the transaction so it can be used again in the future.
         _i2cTransaction->reset();
-        Provider::ThrowError(hr, L"Could not queue I2c transaction.");
+        LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
     }
 
     hr = _i2cTransaction->queueRead(readBuffer->Data, readBuffer->Length);
@@ -236,7 +236,7 @@ ProviderI2cTransferResult I2cDeviceProvider::WriteReadPartial(const Platform::Ar
     {
         // Clean out the transaction so it can be used again in the future.
         _i2cTransaction->reset();
-        Provider::ThrowError(hr, L"Could not queue I2c transaction.");
+        LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
     }
 
     hr = _i2cTransaction->execute(_I2cController.get());
@@ -269,7 +269,7 @@ ProviderI2cTransferResult I2cDeviceProvider::WriteReadPartial(const Platform::Ar
     return result;
 }
 
-I2cDeviceProvider::~I2cDeviceProvider()
+LightningI2cDeviceProvider::~LightningI2cDeviceProvider()
 {
     if (_I2cController != nullptr)
     {
@@ -279,7 +279,7 @@ I2cDeviceProvider::~I2cDeviceProvider()
     }
 }
 
-Platform::String ^ I2cDeviceProvider::DeviceId::get()
+Platform::String ^ LightningI2cDeviceProvider::DeviceId::get()
 {
     LPCWSTR deviceName = L"Lightning I2c Device";
 

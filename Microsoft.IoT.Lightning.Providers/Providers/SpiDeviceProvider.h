@@ -11,17 +11,17 @@ namespace Microsoft {
         namespace Lightning {
             namespace Providers {
 
-                public ref class SpiProvider sealed : public ISpiProvider
+                public ref class LightningSpiProvider sealed : public ISpiProvider
                 {
                 public:
                     virtual IAsyncOperation<IVectorView<ISpiControllerProvider^>^>^ GetControllersAsync();
                     static ISpiProvider^ GetSpiProvider();
                 private:
-                    SpiProvider() { }
+                    LightningSpiProvider() { }
                     static ISpiProvider^ providerSingleton;
                 };
 
-                public ref class SpiControllerProvider sealed : public ISpiControllerProvider
+                public ref class LightningSpiControllerProvider sealed : public ISpiControllerProvider
                 {
 
                 public:
@@ -29,7 +29,7 @@ namespace Microsoft {
                     virtual ISpiDeviceProvider ^ GetDeviceProvider(ProviderSpiConnectionSettings ^settings);
                 };
 
-                public ref class SpiDeviceProvider sealed : public ISpiDeviceProvider
+                public ref class LightningSpiDeviceProvider sealed : public ISpiDeviceProvider
                 {
 
                 public:
@@ -50,13 +50,13 @@ namespace Microsoft {
                     virtual void Write(const Platform::Array<unsigned char> ^buffer);
 
 
-                    virtual ~SpiDeviceProvider();
+                    virtual ~LightningSpiDeviceProvider();
 
                 internal:
-                    SpiDeviceProvider(ProviderSpiConnectionSettings ^settings);
+                    LightningSpiDeviceProvider(ProviderSpiConnectionSettings ^settings);
 
                 private:
-                    SpiDeviceProvider() { }
+                    LightningSpiDeviceProvider() { }
                     ProviderSpiConnectionSettings ^_ConnectionSettings;
                     std::unique_ptr<SpiControllerClass> _SpiController;
                     IGpioPinProvider^ _chipSelectPin;

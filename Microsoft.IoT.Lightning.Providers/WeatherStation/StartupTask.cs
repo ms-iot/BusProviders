@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.IoT.Lightning.Providers;
 using System;
-using System.Collections.Generic;
 using Windows.ApplicationModel.Background;
+using Windows.Devices;
 using Windows.Devices.I2c;
-using Windows.Devices.Enumeration;
 using Windows.System.Threading;
 
 namespace WeatherStation
@@ -14,25 +14,20 @@ namespace WeatherStation
         BackgroundTaskDeferral deferral;
         private ThreadPoolTimer timer;
         I2cDevice sensor;
-        I2cController controller;
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             deferral = taskInstance.GetDeferral();
 
-            if (Microsoft.IoT.Lightning.Providers.Provider.IsLightningEnabled)
+            if (LightningProvider.IsLightningEnabled)
             {
-                Windows.Devices.LowLevelDevicesController.DefaultProvider = new Microsoft.IoT.Lightning.Providers.Provider();
-                controller = await I2cController.GetDefaultAsync();
-                sensor = controller.GetDevice(new I2cConnectionSettings(0x40));
+                LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
             }
-            else
-            {
-                String aqs = I2cDevice.GetDeviceSelector("I2C1");
-                IReadOnlyList<DeviceInformation> dis = await DeviceInformation.FindAllAsync(aqs);
-                //Ox40 was determined by looking at the datasheet for the device
-                sensor = await I2cDevice.FromIdAsync(dis[0].Id, new I2cConnectionSettings(0x40));
-            }
+
+            // The code below should work the same with any provider, including Lightning and the default one.
+            I2cController controller = await I2cController.GetDefaultAsync();
+            //Ox40 was determined by looking at the datasheet for the device
+            sensor = controller.GetDevice(new I2cConnectionSettings(0x40));
 
             timer = ThreadPoolTimer.CreatePeriodicTimer(Timer_Tick, TimeSpan.FromMilliseconds(1000));
         }

@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.IoT.Lightning.Providers;
 using System;
 using Windows.ApplicationModel.Background;
-using Windows.System.Threading;
+using Windows.Devices;
 using Windows.Devices.Gpio;
+using Windows.System.Threading;
 
 // The Background Application template is documented at http://go.microsoft.com/fwlink/?LinkID=533884&clcid=0x409
 
@@ -21,10 +23,9 @@ namespace BlinkyBackground
         {
             var deferral = taskInstance.GetDeferral();
 
-            if (Microsoft.IoT.Lightning.Providers.Provider.IsLightningEnabled)
+            if (LightningProvider.IsLightningEnabled)
             {
-                Windows.Devices.LowLevelDevicesController.DefaultProvider =  /* set Lightning as the default provider */
-                     new Microsoft.IoT.Lightning.Providers.Provider();
+                LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider(); /* set Lightning as the default provider */
             }
 
             var gpioController = await GpioController.GetDefaultAsync(); /* Get the default GPIO controller on the system */

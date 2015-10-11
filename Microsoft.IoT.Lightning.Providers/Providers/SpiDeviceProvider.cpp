@@ -9,48 +9,48 @@
 
 using namespace Microsoft::IoT::Lightning::Providers;
 
-#pragma region SpiProvider
+#pragma region LightningSpiProvider
 
-ISpiProvider^ SpiProvider::providerSingleton = nullptr;
+ISpiProvider^ LightningSpiProvider::providerSingleton = nullptr;
 
-ISpiProvider ^ SpiProvider::GetSpiProvider()
+ISpiProvider ^ LightningSpiProvider::GetSpiProvider()
 {
     if (providerSingleton == nullptr)
     {
-        providerSingleton = ref new SpiProvider();
+        providerSingleton = ref new LightningSpiProvider();
     }
 
     return providerSingleton;
 }
 
-IAsyncOperation<IVectorView<ISpiControllerProvider^>^>^ SpiProvider::GetControllersAsync(
+IAsyncOperation<IVectorView<ISpiControllerProvider^>^>^ LightningSpiProvider::GetControllersAsync(
     void
     )
 {
     return concurrency::create_async([]() -> IVectorView<ISpiControllerProvider^>^ {
 
         auto controllerCollection = ref new Vector<ISpiControllerProvider^>();
-        controllerCollection->Append(ref new SpiControllerProvider());
+        controllerCollection->Append(ref new LightningSpiControllerProvider());
         return controllerCollection->GetView();
     });
 }
 
 #pragma endregion
 
-#pragma region SpiControllerProvider
+#pragma region LightningSpiControllerProvider
 
-ISpiDeviceProvider ^ SpiControllerProvider::GetDeviceProvider(
+ISpiDeviceProvider ^ LightningSpiControllerProvider::GetDeviceProvider(
     ProviderSpiConnectionSettings ^settings
     )
 {
-    return ref new SpiDeviceProvider(settings);
+    return ref new LightningSpiDeviceProvider(settings);
 }
 
 #pragma endregion
 
-#pragma region SpiDeviceProvider
+#pragma region LightningSpiDeviceProvider
 
-SpiDeviceProvider::SpiDeviceProvider(ProviderSpiConnectionSettings ^settings)
+LightningSpiDeviceProvider::LightningSpiDeviceProvider(ProviderSpiConnectionSettings ^settings)
 {
     _ConnectionSettings = settings;
 
@@ -59,7 +59,7 @@ SpiDeviceProvider::SpiDeviceProvider(ProviderSpiConnectionSettings ^settings)
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"An error occurred determining board type.");
+        LightningProvider::ThrowError(hr, L"An error occurred determining board type.");
     }
 
     if (board == BoardPinsClass::BOARD_TYPE::MBM_BARE)
@@ -79,7 +79,7 @@ SpiDeviceProvider::SpiDeviceProvider(ProviderSpiConnectionSettings ^settings)
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"An error occurred while configuring pins for SPI");
+        LightningProvider::ThrowError(hr, L"An error occurred while configuring pins for SPI");
     }
 
     // Set the SPI bit shifting order to MSB
@@ -90,7 +90,7 @@ SpiDeviceProvider::SpiDeviceProvider(ProviderSpiConnectionSettings ^settings)
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"An error occurred while initializing the SPI controller");
+        LightningProvider::ThrowError(hr, L"An error occurred while initializing the SPI controller");
     }
 
     // Try to find and open the SPI CS pin
@@ -123,12 +123,12 @@ SpiDeviceProvider::SpiDeviceProvider(ProviderSpiConnectionSettings ^settings)
     }
 
     // Open the chip select pin
-    auto gpioControllerProvider = ref new GpioControllerProvider();
+    auto gpioControllerProvider = ref new LightningGpioControllerProvider();
     _chipSelectPin = gpioControllerProvider->OpenPinProviderNoMapping(spiChipSelectPin, ProviderGpioSharingMode::Exclusive);
     _chipSelectPin->SetDriveMode(ProviderGpioPinDriveMode::Output);
 }
 
-void SpiDeviceProvider::Read(Platform::WriteOnlyArray<unsigned char>^ buffer)
+void LightningSpiDeviceProvider::Read(Platform::WriteOnlyArray<unsigned char>^ buffer)
 {
     if (buffer == nullptr)
     {
@@ -139,11 +139,11 @@ void SpiDeviceProvider::Read(Platform::WriteOnlyArray<unsigned char>^ buffer)
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Could not read data from SPI device.");
+        LightningProvider::ThrowError(hr, L"Could not read data from SPI device.");
     }
 }
 
-void SpiDeviceProvider::TransferFullDuplex(const Platform::Array<unsigned char>^ writeBuffer, Platform::WriteOnlyArray<unsigned char>^ readBuffer)
+void LightningSpiDeviceProvider::TransferFullDuplex(const Platform::Array<unsigned char>^ writeBuffer, Platform::WriteOnlyArray<unsigned char>^ readBuffer)
 {
     if (writeBuffer == nullptr || readBuffer == nullptr)
     {
@@ -159,11 +159,11 @@ void SpiDeviceProvider::TransferFullDuplex(const Platform::Array<unsigned char>^
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Could not transfer data from SPI device.");
+        LightningProvider::ThrowError(hr, L"Could not transfer data from SPI device.");
     }
 }
 
-void SpiDeviceProvider::TransferSequential(const Platform::Array<unsigned char>^ writeBuffer, Platform::WriteOnlyArray<unsigned char>^ readBuffer)
+void LightningSpiDeviceProvider::TransferSequential(const Platform::Array<unsigned char>^ writeBuffer, Platform::WriteOnlyArray<unsigned char>^ readBuffer)
 {
     if (writeBuffer == nullptr || readBuffer == nullptr)
     {
@@ -174,18 +174,18 @@ void SpiDeviceProvider::TransferSequential(const Platform::Array<unsigned char>^
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Could not write data to SPI device.");
+        LightningProvider::ThrowError(hr, L"Could not write data to SPI device.");
     }
 
     hr = TransferFullDuplexInternal(nullptr, readBuffer);
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Could not read data from SPI device.");
+        LightningProvider::ThrowError(hr, L"Could not read data from SPI device.");
     }
 }
 
-void SpiDeviceProvider::Write(const Platform::Array<unsigned char>^ buffer)
+void LightningSpiDeviceProvider::Write(const Platform::Array<unsigned char>^ buffer)
 {
     if (buffer == nullptr)
     {
@@ -196,12 +196,12 @@ void SpiDeviceProvider::Write(const Platform::Array<unsigned char>^ buffer)
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Could not write data to SPI device.");
+        LightningProvider::ThrowError(hr, L"Could not write data to SPI device.");
     }
 }
 
 
-HRESULT SpiDeviceProvider::TransferFullDuplexInternal(const Platform::Array<unsigned char> ^writeBuffer, Platform::WriteOnlyArray<unsigned char> ^readBuffer)
+HRESULT LightningSpiDeviceProvider::TransferFullDuplexInternal(const Platform::Array<unsigned char> ^writeBuffer, Platform::WriteOnlyArray<unsigned char> ^readBuffer)
 {
     // Prerequisites:
     //  1) At least one of writeBuffer or ReadBuffer is valid
@@ -242,7 +242,7 @@ HRESULT SpiDeviceProvider::TransferFullDuplexInternal(const Platform::Array<unsi
     return hr;
 }
 
-SpiDeviceProvider::~SpiDeviceProvider()
+LightningSpiDeviceProvider::~LightningSpiDeviceProvider()
 {
     if (_SpiController != nullptr)
     {
@@ -252,7 +252,7 @@ SpiDeviceProvider::~SpiDeviceProvider()
     }
 }
 
-Platform::String ^ SpiDeviceProvider::DeviceId::get()
+Platform::String ^ LightningSpiDeviceProvider::DeviceId::get()
 {
     LPCWSTR deviceName = L"Lightning SPI Device";
 
@@ -274,7 +274,7 @@ Platform::String ^ SpiDeviceProvider::DeviceId::get()
     return ref new Platform::String(deviceName);
 }
 
-ProviderSpiConnectionSettings ^ SpiDeviceProvider::ConnectionSettings::get()
+ProviderSpiConnectionSettings ^ LightningSpiDeviceProvider::ConnectionSettings::get()
 {
     return _ConnectionSettings;
 }

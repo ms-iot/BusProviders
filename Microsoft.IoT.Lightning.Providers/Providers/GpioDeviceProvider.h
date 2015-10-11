@@ -8,18 +8,18 @@ namespace Microsoft {
         namespace Lightning {
             namespace Providers {
 
-                public ref class GpioProvider sealed : public IGpioProvider
+                public ref class LightningGpioProvider sealed : public IGpioProvider
                 {
                 public:
                     virtual IVectorView<IGpioControllerProvider^>^ GetControllers();
                     static IGpioProvider^ GetGpioProvider();
 
                 private:
-                    GpioProvider() { }
+                    LightningGpioProvider() { }
                     static IGpioProvider^ providerSingleton;
                 };
 
-                public ref class GpioControllerProvider sealed : public IGpioControllerProvider
+                public ref class LightningGpioControllerProvider sealed : public IGpioControllerProvider
                 {
                 public:
                     // Inherited via IGpioControllerProvider
@@ -27,7 +27,7 @@ namespace Microsoft {
                     virtual IGpioPinProvider^ OpenPinProvider(int pin, ProviderGpioSharingMode sharingMode);
 
                 internal:
-                    GpioControllerProvider();
+                    LightningGpioControllerProvider();
                     IGpioPinProvider^ OpenPinProviderNoMapping(int mappedPin, ProviderGpioSharingMode sharingMode);
 
                 private:
@@ -37,7 +37,7 @@ namespace Microsoft {
 
                 };
 
-                public ref class GpioPinProvider sealed : public IGpioPinProvider
+                public ref class LightningGpioPinProvider sealed : public IGpioPinProvider
                 {
 
                 public:
@@ -84,10 +84,10 @@ namespace Microsoft {
                         }
                     }
 
-                    virtual ~GpioPinProvider() { }
+                    virtual ~LightningGpioPinProvider() { }
 
                 internal:
-                    GpioPinProvider(int pinNumber, ProviderGpioSharingMode sharingMode) :
+                    LightningGpioPinProvider(int pinNumber, ProviderGpioSharingMode sharingMode) :
                         _PinNumber(pinNumber),
                         _SharingMode(sharingMode),
                         _DriveMode(ProviderGpioPinDriveMode::Input)

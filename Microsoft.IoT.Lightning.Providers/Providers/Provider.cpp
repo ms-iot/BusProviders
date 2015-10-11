@@ -12,32 +12,32 @@
 
 using namespace Microsoft::IoT::Lightning::Providers;
 
-IAdcControllerProvider ^ Provider::AdcControllerProvider::get()
+IAdcControllerProvider ^ LightningProvider::AdcControllerProvider::get()
 {
     throw ref new Platform::NotImplementedException();
 }
 
-IGpioControllerProvider ^ Provider::GpioControllerProvider::get()
+IGpioControllerProvider ^ LightningProvider::GpioControllerProvider::get()
 {
-    return ref new Microsoft::IoT::Lightning::Providers::GpioControllerProvider();
+    return ref new LightningGpioControllerProvider();
 }
 
-II2cControllerProvider ^ Provider::I2cControllerProvider::get()
+II2cControllerProvider ^ LightningProvider::I2cControllerProvider::get()
 {
-    return ref new Microsoft::IoT::Lightning::Providers::I2cControllerProvider(EXTERNAL_I2C_BUS);
+    return ref new LightningI2cControllerProvider(EXTERNAL_I2C_BUS);
 }
 
-IPwmControllerProvider ^ Provider::PwmControllerProvider::get()
+IPwmControllerProvider ^ LightningProvider::PwmControllerProvider::get()
 {
     throw ref new Platform::NotImplementedException();
 }
 
-ISpiControllerProvider ^ Provider::SpiControllerProvider::get()
+ISpiControllerProvider ^ LightningProvider::SpiControllerProvider::get()
 {
-    return ref new Microsoft::IoT::Lightning::Providers::SpiControllerProvider();
+    return ref new LightningSpiControllerProvider();
 }
 
-bool Provider::IsLightningEnabled::get()
+bool LightningProvider::IsLightningEnabled::get()
 {
     ULONG state;
     if (g_pins.getPinState(10, state) == DMAP_E_DEVICE_NOT_FOUND_ON_SYSTEM)
@@ -48,7 +48,7 @@ bool Provider::IsLightningEnabled::get()
     return true;
 }
 
-void Provider::ThrowError(HRESULT hr, LPCWSTR errorMessage)
+void LightningProvider::ThrowError(HRESULT hr, LPCWSTR errorMessage)
 {
     auto it = DmapErrors.find(hr);
         
@@ -60,4 +60,16 @@ void Provider::ThrowError(HRESULT hr, LPCWSTR errorMessage)
     {
         throw ref new Platform::Exception(hr, ref new Platform::String(errorMessage));
     }
+}
+
+ILowLevelDevicesAggregateProvider^ LightningProvider::providerSingleton = nullptr;
+
+ILowLevelDevicesAggregateProvider ^ LightningProvider::GetAggregateProvider()
+{
+    if (providerSingleton == nullptr)
+    {
+        providerSingleton = ref new LightningProvider();
+    }
+
+    return providerSingleton;
 }

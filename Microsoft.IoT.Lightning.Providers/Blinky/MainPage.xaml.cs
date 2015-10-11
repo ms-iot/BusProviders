@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.IoT.Lightning.Providers;
+using System;
+using Windows.Devices;
 using Windows.Devices.Gpio;
 using Windows.System.Threading;
 using Windows.UI.Core;
@@ -29,10 +31,9 @@ namespace Blinky
         private async void InitGpio()
         {
 
-            if (Microsoft.IoT.Lightning.Providers.Provider.IsLightningEnabled)
+            if (LightningProvider.IsLightningEnabled)
             {
-                Windows.Devices.LowLevelDevicesController.DefaultProvider =  /* set Lightning as the default provider */
-                     new Microsoft.IoT.Lightning.Providers.Provider();
+                LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
             }
 
             gpioController = await GpioController.GetDefaultAsync(); /* Get the default GPIO controller on the system */

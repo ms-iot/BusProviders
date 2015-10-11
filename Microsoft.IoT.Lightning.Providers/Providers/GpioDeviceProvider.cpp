@@ -54,15 +54,15 @@ const std::map<int, int> MBM_GPIO_Pins =
 
 #pragma endregion
 
-#pragma region GpioProvider
+#pragma region LightningGpioProvider
 
-IGpioProvider^ GpioProvider::providerSingleton = nullptr;
+IGpioProvider^ LightningGpioProvider::providerSingleton = nullptr;
 
-IGpioProvider ^ GpioProvider::GetGpioProvider()
+IGpioProvider ^ LightningGpioProvider::GetGpioProvider()
 {
     if (providerSingleton == nullptr)
     {
-        providerSingleton = ref new GpioProvider();
+        providerSingleton = ref new LightningGpioProvider();
     }
 
     return providerSingleton;
@@ -70,20 +70,20 @@ IGpioProvider ^ GpioProvider::GetGpioProvider()
 
 #pragma endregion
 
-#pragma region GpioControllerProvider
+#pragma region LightningGpioControllerProvider
 
-GpioControllerProvider::GpioControllerProvider()
+LightningGpioControllerProvider::LightningGpioControllerProvider()
 {
     Initialize();
 }
 
-void GpioControllerProvider::Initialize()
+void LightningGpioControllerProvider::Initialize()
 {
     HRESULT hr = g_pins.getBoardType(_boardType);
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"An error occurred determining board type.");
+        LightningProvider::ThrowError(hr, L"An error occurred determining board type.");
     }
 
     if (!(_boardType == BoardPinsClass::BOARD_TYPE::MBM_BARE || 
@@ -96,13 +96,13 @@ void GpioControllerProvider::Initialize()
     hr = g_pins.getGpioPinCount(pinCount);
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Gpio Controller Provider Init Failed.");
+        LightningProvider::ThrowError(hr, L"Gpio Controller Provider Init Failed.");
     }
 
     _pinCount = (USHORT)pinCount;
 }
 
-IGpioPinProvider^ GpioControllerProvider::OpenPinProvider(
+IGpioPinProvider^ LightningGpioControllerProvider::OpenPinProvider(
     int pin,
     ProviderGpioSharingMode sharingMode
     )
@@ -131,25 +131,25 @@ IGpioPinProvider^ GpioControllerProvider::OpenPinProvider(
 }
 
 
-IGpioPinProvider^ GpioControllerProvider::OpenPinProviderNoMapping(int mappedPin, ProviderGpioSharingMode sharingMode)
+IGpioPinProvider^ LightningGpioControllerProvider::OpenPinProviderNoMapping(int mappedPin, ProviderGpioSharingMode sharingMode)
 {
-    return ref new GpioPinProvider(mappedPin, sharingMode);
+    return ref new LightningGpioPinProvider(mappedPin, sharingMode);
 }
 
-IVectorView<IGpioControllerProvider^>^ GpioProvider::GetControllers(
+IVectorView<IGpioControllerProvider^>^ LightningGpioProvider::GetControllers(
     void
     )
 {
     auto controllerCollection = ref new Vector<IGpioControllerProvider^>();
-    controllerCollection->Append(ref new GpioControllerProvider());
+    controllerCollection->Append(ref new LightningGpioControllerProvider());
     return controllerCollection->GetView();
 }
 
 #pragma endregion
 
-#pragma region GpioPinProvider
+#pragma region LightningGpioPinProvider
 
-void GpioPinProvider::SetDriveMode(
+void LightningGpioPinProvider::SetDriveMode(
     ProviderGpioPinDriveMode value
     )
 {
@@ -162,7 +162,7 @@ void GpioPinProvider::SetDriveMode(
 }
 
 
-void GpioPinProvider::SetDriveModeInternal(
+void LightningGpioPinProvider::SetDriveModeInternal(
     ProviderGpioPinDriveMode value
     )
 {
@@ -185,14 +185,14 @@ void GpioPinProvider::SetDriveModeInternal(
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Error setting pin drive mode.");
+        LightningProvider::ThrowError(hr, L"Error setting pin drive mode.");
     }
 
     // set the member variable
     _DriveMode = value;
 }
 
-void GpioPinProvider::Write(
+void LightningGpioPinProvider::Write(
     ProviderGpioPinValue value
     )
 {
@@ -204,17 +204,17 @@ void GpioPinProvider::Write(
 
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Invalid function for pin.");
+        LightningProvider::ThrowError(hr, L"Invalid function for pin.");
     }
 
     hr = g_pins.setPinState(_PinNumber, state);
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Could not write pin value.");
+        LightningProvider::ThrowError(hr, L"Could not write pin value.");
     }
 }
 
-ProviderGpioPinValue GpioPinProvider::Read()
+ProviderGpioPinValue LightningGpioPinProvider::Read()
 {
     HRESULT hr = S_OK;
     ULONG state = 0;
@@ -223,13 +223,13 @@ ProviderGpioPinValue GpioPinProvider::Read()
     hr = g_pins.verifyPinFunction(_PinNumber, FUNC_DIO, BoardPinsClass::NO_LOCK_CHANGE);
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Invalid function for pin.");
+        LightningProvider::ThrowError(hr, L"Invalid function for pin.");
     }
     
     hr = g_pins.getPinState(_PinNumber, state);
     if (FAILED(hr))
     {
-        Provider::ThrowError(hr, L"Could not read pin value.");
+        LightningProvider::ThrowError(hr, L"Could not read pin value.");
     }
 
     switch (state)
@@ -239,7 +239,7 @@ ProviderGpioPinValue GpioPinProvider::Read()
     case HIGH:
         returnValue = ProviderGpioPinValue::High;
     default:
-        Provider::ThrowError(hr, L"Invalid pin value.");
+        LightningProvider::ThrowError(hr, L"Invalid pin value.");
     }
 
     return returnValue;

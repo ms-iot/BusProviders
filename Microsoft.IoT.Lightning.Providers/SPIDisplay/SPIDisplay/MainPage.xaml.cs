@@ -1,27 +1,13 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using DisplayFont;
+using Microsoft.IoT.Lightning.Providers;
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.Devices.Enumeration;
-using Windows.Devices.Spi;
+using Windows.Devices;
 using Windows.Devices.Gpio;
-using DisplayFont;
-
-using Microsoft.IoT.Lightning.Providers;
-using Windows.Devices.I2c;
+using Windows.Devices.Spi;
+using Windows.UI.Xaml.Controls;
 
 namespace SPIDisplay
 {
@@ -84,6 +70,7 @@ namespace SPIDisplay
         {
             try
             {
+                InitLightningProvider();
                 await InitGpio();       /* Initialize the GPIO controller and GPIO pins */
                 await InitSpi();        /* Initialize the SPI controller                */
                 await InitDisplay();    /* Initialize the display                       */
@@ -111,6 +98,15 @@ namespace SPIDisplay
             Text_Status.Text = "Status: Initialized";
         }
 
+        private void InitLightningProvider()
+        {
+
+            if (LightningProvider.IsLightningEnabled)
+            {
+                LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
+            }
+        }
+
         /* Initialize the SPI bus */
         private async Task InitSpi()
         {
@@ -122,18 +118,9 @@ namespace SPIDisplay
                                                                                  * to set the clock polarity and phase to: CPOL = 1, CPHA = 1         
                                                                                  */
 
-                if (Provider.IsLightningEnabled)
-                {
-                    SpiController controller =                               /* Get the default Lightning SPI provider */
-                        (await SpiController.GetControllersAsync(SpiProvider.GetSpiProvider()))[0];
-                    SpiDisplay = controller.GetDevice(settings);             /* Get the Spi Display device using its settings */
-                }
-                else
-                {
-                    string spiAqs = SpiDevice.GetDeviceSelector(SPI_CONTROLLER_NAME);       /* Find the selector string for the SPI bus controller          */
-                    var devicesInfo = await DeviceInformation.FindAllAsync(spiAqs);         /* Find the SPI bus controller device with our selector string  */
-                    SpiDisplay = await SpiDevice.FromIdAsync(devicesInfo[0].Id, settings);  /* Create an SpiDevice with our bus controller and SPI settings */
-                }
+                SpiController controller = await SpiController.GetDefaultAsync();     /* Get the default SPI controller */
+
+                SpiDisplay = controller.GetDevice(settings);             /* Get the Spi Display device using its settings */
 
             }
             /* If initialization fails, display the exception and stop running */
@@ -175,13 +162,6 @@ namespace SPIDisplay
         /* Initialize the GPIO */
         private async Task InitGpio()
         {
-
-            if (Provider.IsLightningEnabled)
-            {
-                Windows.Devices.LowLevelDevicesController.DefaultProvider =  /* set Lightning as the default provider */
-                     new Microsoft.IoT.Lightning.Providers.Provider();
-            }
-
             IoController = await GpioController.GetDefaultAsync(); /* Get the default GPIO controller on the system */
             if (IoController == null)
             {
