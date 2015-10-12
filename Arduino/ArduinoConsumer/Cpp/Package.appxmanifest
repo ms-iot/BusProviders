@@ -9,14 +9,14 @@
 
   <Identity
     Name="ArduinoConsumerCpp-uwp"
-    Publisher="CN=bfjelds"
+    Publisher="CN=Microsoft"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="210f68dd-8054-442a-a926-9f1ec62d76bc" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>ArduinoConsumerCpp</DisplayName>
-    <PublisherDisplayName>bfjelds</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
