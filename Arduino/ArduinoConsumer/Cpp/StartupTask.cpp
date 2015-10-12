@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft. All rights reserved.
+
 #include "pch.h"
 #include "StartupTask.h"
 
@@ -18,18 +20,23 @@ using namespace concurrency;
 void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
 {
     _Deferral = taskInstance->GetDeferral();
+    _FanOn = true;
 
     Windows::Devices::LowLevelDevicesController::DefaultProvider = ref new ArduinoProviders::ArduinoProvider();
 
+    TimeSpan interval;
+    interval.Duration = 50 * 1000 * 10;
+
+
+    //
+    // Use PwmController to turn on and off a servo on PWM pin #3
+    // based on whether the ambient temperature is higher than the
+    // temperature set by the potentiometer attached via ADC below.
+    //
     auto pwmController = concurrency::create_task(PwmController::GetDefaultAsync()).get();
     _PwmPin = pwmController->OpenPin(3);
     _PwmPin->SetActiveDutyCyclePercentage(0.0);
     _PwmPin->Start();
-
-    _FanOn = true;
-
-    TimeSpan interval;
-    interval.Duration = 50 * 1000 * 10;
 
     _PwmTimer = ThreadPoolTimer::CreatePeriodicTimer(
         ref new TimerElapsedHandler([this, pwmController](ThreadPoolTimer ^timer)
@@ -49,6 +56,11 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
         }), 
         interval);
 
+    //
+    // Use AdcController to read the value from a potentiometer
+    // on ADC pin #1.  This value will converted to a temperature
+    // threshold between 50 and 100 degrees farenheit.
+    //
     auto adcController = concurrency::create_task(Windows::Devices::Adc::AdcController::GetDefaultAsync()).get();
     _AdcChannel = adcController->OpenChannel(1);
     _AdcTimer = ThreadPoolTimer::CreatePeriodicTimer(
@@ -67,6 +79,10 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
         }),
         interval);
 
+    //
+    // Use I2cController to read the ambient temperature from a HTU21D
+    // sensor connected to the I2c pins.
+    //
     auto i2cController = concurrency::create_task(Windows::Devices::I2c::I2cController::GetDefaultAsync()).get();
     auto i2cConnectionSettings = ref new Windows::Devices::I2c::I2cConnectionSettings(0x40);
     _I2cDevice = i2cController->GetDevice(i2cConnectionSettings);
@@ -91,6 +107,10 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
         interval);
 
 
+    //
+    // Use GpioController to toggle a LED on GPIO pin 7 when our
+    // fan system is on/off.
+    //
     auto gpioController = concurrency::create_task(Windows::Devices::Gpio::GpioController::GetDefaultAsync()).get();
     _LedPin = gpioController->OpenPin(7);
     _LedPin->SetDriveMode(Windows::Devices::Gpio::GpioPinDriveMode::Output);
@@ -100,6 +120,10 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
         Windows::Devices::Gpio::GpioPinValue::High
         );
 
+    //
+    // Use GpioController to read the on/off state of our fan
+    // system from a button connected to GPIO pin 8
+    //
     _ButtonPin = gpioController->OpenPin(8);
     _ButtonPin->SetDriveMode(Windows::Devices::Gpio::GpioPinDriveMode::Input);
     _ButtonPin->ValueChanged +=
@@ -119,17 +143,12 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
             }
             
         });
-
-    //while (true)
-    {
-        Sleep(1000);
-    }
 }
 
 StartupTask::~StartupTask()
 {
-    if (_PwmPin)
-    {
-        _PwmPin->Stop();
-    }
+    if (_PwmTimer) _PwmTimer->Cancel();
+    if (_AdcTimer) _AdcTimer->Cancel();
+    if (_I2cTimer) _I2cTimer->Cancel();
+    if (_PwmPin) _PwmPin->Stop();
 }

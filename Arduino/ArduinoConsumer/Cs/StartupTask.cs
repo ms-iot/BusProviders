@@ -18,6 +18,7 @@ namespace ArduinoConsumer
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             deferral = taskInstance.GetDeferral();
+            _FanOn = true;
 
             LowLevelDevicesController.DefaultProvider = new ArduinoProviders.ArduinoProvider();
 
@@ -31,7 +32,7 @@ namespace ArduinoConsumer
             _PwmPin.SetActiveDutyCyclePercentage(0);
             _PwmPin.Start();
             _PwmTimer = ThreadPoolTimer.CreatePeriodicTimer(
-                (timer) => 
+                (timer) =>
                 {
                     if (!_FanOn || _TemperatureThreshold >= _CurrentTemperature)
                     {
@@ -43,7 +44,7 @@ namespace ArduinoConsumer
                         // if the ambient temperature is above the threshold, turn on the fan
                         _PwmPin.SetActiveDutyCyclePercentage(2.0 / (1000.0 / pwmController.ActualFrequency));
                     }
-                }, 
+                },
                 TimeSpan.FromMilliseconds(50));
 
             //
@@ -109,7 +110,7 @@ namespace ArduinoConsumer
             _ButtonPin = gpioController.OpenPin(8);
             _ButtonPin.SetDriveMode(GpioPinDriveMode.Input);
             _ButtonPin.ValueChanged +=
-                (sender, e) => 
+                (sender, e) =>
                 {
                     if (e.Edge == GpioPinEdge.FallingEdge)
                     {
@@ -121,10 +122,10 @@ namespace ArduinoConsumer
 
         ~StartupTask()
         {
-            _PwmTimer.Cancel();
-            _AdcTimer.Cancel();
-            _I2cTimer.Cancel();
-            _PwmPin.Stop();
+            if (_PwmTimer != null) _PwmTimer.Cancel();
+            if (_AdcTimer != null) _AdcTimer.Cancel();
+            if (_I2cTimer != null) _I2cTimer.Cancel();
+            if (_PwmPin != null) _PwmPin.Stop();
         }
 
 

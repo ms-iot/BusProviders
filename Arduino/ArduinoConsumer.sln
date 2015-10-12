@@ -2,7 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArduinoConsumer", "ArduinoConsumer\ArduinoConsumer.csproj", "{9AD53AB8-378A-43AF-ABE7-0EB8E8998B1E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArduinoConsumer", "ArduinoConsumer\Cs\ArduinoConsumer.csproj", "{9AD53AB8-378A-43AF-ABE7-0EB8E8998B1E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoConsumerCpp", "ArduinoConsumer\Cpp\ArduinoConsumerCpp.vcxproj", "{F297B44D-700E-4F77-996A-0374E80E9419}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoProviders", "ArduinoProviders\ArduinoProviders.vcxproj", "{46A913D5-F809-4026-9DC9-CF94F643A0FE}"
 EndProject
@@ -11,8 +13,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Microsoft.Maker.Firmata", "..\..\remote-wiring\Microsoft.Maker.win10\Microsoft.Maker.Firmata\Microsoft.Maker.Firmata.vcxproj", "{F0A53BC9-C617-47DD-8B68-F91E3502D633}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Microsoft.Maker.RemoteWiring", "..\..\remote-wiring\Microsoft.Maker.win10\Microsoft.Maker.RemoteWiring\Microsoft.Maker.RemoteWiring.vcxproj", "{5A8B1BB1-7CD5-47C4-A1F7-D7BCF5FACAD1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoConsumerCpp", "ArduinoConsumerCpp\ArduinoConsumerCpp.vcxproj", "{F297B44D-700E-4F77-996A-0374E80E9419}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
