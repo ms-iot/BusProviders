@@ -31,6 +31,8 @@ namespace Blinky
         private async void InitGpio()
         {
 
+            // Set the Lightning Provider as the default if Lightning driver is enabled on the target device
+            // Otherwise, the inbox provider will continue to be the default
             if (LightningProvider.IsLightningEnabled)
             {
                 LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
