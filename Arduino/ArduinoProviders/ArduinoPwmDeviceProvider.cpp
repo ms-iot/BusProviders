@@ -6,8 +6,6 @@
 using namespace ArduinoProviders;
 using namespace Platform::Collections;
 
-int _ArduinoPwmPins[] = { 3,5,6,9,10,11 };
-
 void ArduinoPwmControllerProvider::SetPulseParameters(int pin, double dutyCycle, bool invertPolarity)
 {
     if (invertPolarity)
