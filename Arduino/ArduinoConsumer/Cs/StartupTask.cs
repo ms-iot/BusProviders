@@ -84,7 +84,7 @@ namespace ArduinoConsumer
                         {
                             var command = new byte[1] { 0xE3 };
                             var data = new byte[2];
-                            _I2cDevice.WriteRead(command, data);
+                            var status = _I2cDevice.WriteReadPartial(command, data);
 
                             var rawReading = data[0] << 8 | data[1];
                             var ratio = rawReading / (float)65536;
