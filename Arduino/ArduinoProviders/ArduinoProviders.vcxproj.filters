@@ -14,6 +14,7 @@
     <ClCompile Include="ArduinoAdcDeviceProvider.cpp" />
     <ClCompile Include="ArduinoProvider.cpp" />
     <ClCompile Include="ArduinoConnection.cpp" />
+    <ClCompile Include="Dummy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -23,5 +24,9 @@
     <ClInclude Include="ArduinoAdcDeviceProvider.h" />
     <ClInclude Include="ArduinoProvider.h" />
     <ClInclude Include="ArduinoConnection.h" />
+    <ClInclude Include="Dummy.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Windows.Devices.DevicesLowLevelContract.winmd" />
   </ItemGroup>
 </Project>

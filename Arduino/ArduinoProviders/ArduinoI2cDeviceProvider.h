@@ -37,6 +37,25 @@ namespace ArduinoProviders
             const Platform::Array<unsigned char> ^writeBuffer,
             Platform::WriteOnlyArray<unsigned char> ^readBuffer);
 
+        virtual void Write(
+            const Platform::Array<unsigned char> ^buffer)
+        {
+            throw ref new Platform::NotImplementedException();
+        }
+
+        virtual void Read(
+            Platform::WriteOnlyArray<unsigned char> ^buffer)
+        {
+            throw ref new Platform::NotImplementedException();
+        }
+
+        virtual void WriteRead(
+            const Platform::Array<unsigned char> ^writeBuffer,
+            Platform::WriteOnlyArray<unsigned char> ^readBuffer)
+        {
+            throw ref new Platform::NotImplementedException();
+        }
+
         virtual ~ArduinoI2cDeviceProvider();
 
     internal:

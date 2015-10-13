@@ -214,6 +214,7 @@
     <ClInclude Include="ArduinoI2cDeviceProvider.h" />
     <ClInclude Include="ArduinoProvider.h" />
     <ClInclude Include="ArduinoPwmDeviceProvider.h" />
+    <ClInclude Include="Dummy.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +224,7 @@
     <ClCompile Include="ArduinoI2cDeviceProvider.cpp" />
     <ClCompile Include="ArduinoProvider.cpp" />
     <ClCompile Include="ArduinoPwmDeviceProvider.cpp" />
+    <ClCompile Include="Dummy.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -244,7 +246,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsIoT, Version=10.0.10563.0" />
+    <SDKReference Include="WindowsDesktop, Version=10.0.10563.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Windows.Devices.DevicesLowLevelContract.winmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Windows.Devices.DevicesLowLevelContract">
+      <HintPath>Windows.Devices.DevicesLowLevelContract.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+      <Private>false</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+    </Reference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
