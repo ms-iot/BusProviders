@@ -27,6 +27,9 @@ namespace Microsoft {
                 public:
                     // Inherited via ISpiControllerProvider
                     virtual ISpiDeviceProvider ^ GetDeviceProvider(ProviderSpiConnectionSettings ^settings);
+
+                internal:
+                    LightningSpiControllerProvider() { }
                 };
 
                 public ref class LightningSpiDeviceProvider sealed : public ISpiDeviceProvider

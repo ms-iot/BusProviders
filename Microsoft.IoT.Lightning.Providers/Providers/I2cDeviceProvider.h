@@ -78,6 +78,7 @@ namespace Microsoft {
                     LightningI2cDeviceProvider(ProviderI2cConnectionSettings ^settings, ULONG busNumber);
 
                 private:
+                    LightningI2cDeviceProvider() { }
                     ProviderI2cConnectionSettings ^_ConnectionSettings;
                     std::unique_ptr<I2cControllerClass> _I2cController;
                     ULONG _busNumber;

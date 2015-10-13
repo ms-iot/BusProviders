@@ -72,7 +72,7 @@ Each of the samples includes with the library show the same pattern.
 The Lightning Provider library depends on the Microsoft.IoT.Lightning Nuget package (https://www.nuget.org/packages/Microsoft.IoT.Lightning), which in turn requires the Arduino SDK Nuget (https://www.nuget.org/packages/Microsoft.IoT.SDKFromArduino). Both Nuget packages are included in the library solution, and are available from Nuget.org. Source code for each is also on GitHub.
 Note, currently Microsoft.IoT.Lightning Nuget is still pre-release, so should be updated from Nuget.org, when newer versions are available.
 ### SDK version
-Additionally, the following version of the Windows SDK should be available for building and using the library: 10.0.10556.0 
+Additionally, the following version of the Windows SDK should be available for building and using the library: 10.0.10563.0 
 
 ## Runtime Requirements
 The APIs in the Lightning Provider library require the Lightning (DMAP) driver to be enabled on the target device. Both Raspberry Pi2 and MinnowBoard Max have the driver available, but not enabled by default. The driver can be enabled using the Windows Devices Web Portal.

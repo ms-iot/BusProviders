@@ -94,12 +94,12 @@ LightningSpiDeviceProvider::LightningSpiDeviceProvider(ProviderSpiConnectionSett
     }
 
     // Try to find and open the SPI CS pin
-    int spiChipSelectPin = 0;
+    int spiChipSelectPinMapped = 0;
     if (board == BoardPinsClass::BOARD_TYPE::MBM_BARE)
     {
         if (settings->ChipSelectLine == 0)
         {
-            spiChipSelectPin = MBM_PIN_CS0;
+            spiChipSelectPinMapped = MBM_PIN_CS0;
         }
         else
         {
@@ -110,11 +110,11 @@ LightningSpiDeviceProvider::LightningSpiDeviceProvider(ProviderSpiConnectionSett
     {
         if (settings->ChipSelectLine == 0)
         {
-            spiChipSelectPin = PI2_PIN_SPI0_CS0;
+            spiChipSelectPinMapped = PI2_PIN_SPI0_CS0;
         }
         else if (settings->ChipSelectLine == 1)
         {
-            spiChipSelectPin = PI2_PIN_SPI0_CS1;
+            spiChipSelectPinMapped = PI2_PIN_SPI0_CS1;
         }
         else
         {
@@ -124,7 +124,7 @@ LightningSpiDeviceProvider::LightningSpiDeviceProvider(ProviderSpiConnectionSett
 
     // Open the chip select pin
     auto gpioControllerProvider = ref new LightningGpioControllerProvider();
-    _chipSelectPin = gpioControllerProvider->OpenPinProviderNoMapping(spiChipSelectPin, ProviderGpioSharingMode::Exclusive);
+    _chipSelectPin = gpioControllerProvider->OpenPinProviderNoMapping(settings->ChipSelectLine, spiChipSelectPinMapped, ProviderGpioSharingMode::Exclusive);
     _chipSelectPin->SetDriveMode(ProviderGpioPinDriveMode::Output);
 }
 
