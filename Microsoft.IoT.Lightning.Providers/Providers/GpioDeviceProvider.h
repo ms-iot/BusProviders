@@ -28,7 +28,7 @@ namespace Microsoft {
 
                 internal:
                     LightningGpioControllerProvider();
-                    IGpioPinProvider^ OpenPinProviderNoMapping(int mappedPin, ProviderGpioSharingMode sharingMode);
+                    IGpioPinProvider^ OpenPinProviderNoMapping(int pin, int mappedPin, ProviderGpioSharingMode sharingMode);
 
                 private:
                     unsigned short _pinCount;
@@ -87,8 +87,9 @@ namespace Microsoft {
                     virtual ~LightningGpioPinProvider() { }
 
                 internal:
-                    LightningGpioPinProvider(int pinNumber, ProviderGpioSharingMode sharingMode) :
-                        _PinNumber(pinNumber),
+                    LightningGpioPinProvider(int pin, int mappedPin, ProviderGpioSharingMode sharingMode) :
+                        _MappedPinNumber(mappedPin),
+                        _PinNumber(pin),
                         _SharingMode(sharingMode),
                         _DriveMode(ProviderGpioPinDriveMode::Input)
                     {
@@ -96,13 +97,17 @@ namespace Microsoft {
                         {
                             throw ref new Platform::NotImplementedException(L"Unsupported Gpio Pin SharingMode");
                         }
+
+                        // Default to output
+                        SetDriveModeInternal(ProviderGpioPinDriveMode::Output);
                     }
 
                 private:
-                    void Initialize();
+                    LightningGpioPinProvider () {}
                     void SetDriveModeInternal(ProviderGpioPinDriveMode value);
 
                     int _PinNumber;
+                    int _MappedPinNumber;
                     ProviderGpioSharingMode _SharingMode;
                     ProviderGpioPinDriveMode _DriveMode;
                 };

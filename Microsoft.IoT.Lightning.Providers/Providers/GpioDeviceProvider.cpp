@@ -127,13 +127,13 @@ IGpioPinProvider^ LightningGpioControllerProvider::OpenPinProvider(
         mappedPin = it->second;
     }
 
-    return OpenPinProviderNoMapping(mappedPin, sharingMode);
+    return OpenPinProviderNoMapping(pin, mappedPin, sharingMode);
 }
 
 
-IGpioPinProvider^ LightningGpioControllerProvider::OpenPinProviderNoMapping(int mappedPin, ProviderGpioSharingMode sharingMode)
+IGpioPinProvider^ LightningGpioControllerProvider::OpenPinProviderNoMapping(int pin, int mappedPin, ProviderGpioSharingMode sharingMode)
 {
-    return ref new LightningGpioPinProvider(mappedPin, sharingMode);
+    return ref new LightningGpioPinProvider(pin, mappedPin, sharingMode);
 }
 
 IVectorView<IGpioControllerProvider^>^ LightningGpioProvider::GetControllers(
@@ -171,13 +171,13 @@ void LightningGpioPinProvider::SetDriveModeInternal(
     switch (value)
     {
     case ProviderGpioPinDriveMode::Input:
-        hr = g_pins.setPinMode(_PinNumber, DIRECTION_IN, false);
+        hr = g_pins.setPinMode(_MappedPinNumber, DIRECTION_IN, false);
         break;
     case ProviderGpioPinDriveMode::Output:
-        hr = g_pins.setPinMode(_PinNumber, DIRECTION_OUT, false);
+        hr = g_pins.setPinMode(_MappedPinNumber, DIRECTION_OUT, false);
         break;
     case ProviderGpioPinDriveMode::InputPullUp:
-        hr = g_pins.setPinMode(_PinNumber, DIRECTION_IN, true);
+        hr = g_pins.setPinMode(_MappedPinNumber, DIRECTION_IN, true);
         break;
     default:
         throw ref new Platform::NotImplementedException(L"Pin drive mode not implemented");
@@ -200,14 +200,14 @@ void LightningGpioPinProvider::Write(
 
     ULONG state = (value == ProviderGpioPinValue::Low) ? LOW : HIGH;
 
-    hr = g_pins.verifyPinFunction(_PinNumber, FUNC_DIO, BoardPinsClass::NO_LOCK_CHANGE);
+    hr = g_pins.verifyPinFunction(_MappedPinNumber, FUNC_DIO, BoardPinsClass::NO_LOCK_CHANGE);
 
     if (FAILED(hr))
     {
         LightningProvider::ThrowError(hr, L"Invalid function for pin.");
     }
 
-    hr = g_pins.setPinState(_PinNumber, state);
+    hr = g_pins.setPinState(_MappedPinNumber, state);
     if (FAILED(hr))
     {
         LightningProvider::ThrowError(hr, L"Could not write pin value.");
@@ -220,13 +220,13 @@ ProviderGpioPinValue LightningGpioPinProvider::Read()
     ULONG state = 0;
     ProviderGpioPinValue returnValue = ProviderGpioPinValue::Low;
 
-    hr = g_pins.verifyPinFunction(_PinNumber, FUNC_DIO, BoardPinsClass::NO_LOCK_CHANGE);
+    hr = g_pins.verifyPinFunction(_MappedPinNumber, FUNC_DIO, BoardPinsClass::NO_LOCK_CHANGE);
     if (FAILED(hr))
     {
         LightningProvider::ThrowError(hr, L"Invalid function for pin.");
     }
     
-    hr = g_pins.getPinState(_PinNumber, state);
+    hr = g_pins.getPinState(_MappedPinNumber, state);
     if (FAILED(hr))
     {
         LightningProvider::ThrowError(hr, L"Could not read pin value.");
