@@ -26,9 +26,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Windows.Devices.DevicesLowLevelContract.winmd">
-      <Filter>Dependencies</Filter>    
+      <Filter>Dependencies</Filter>
+    </None>
+    <None Include="packages.config">
+      <Filter>Dependencies</Filter>
     </None>
   </ItemGroup>
 </Project>

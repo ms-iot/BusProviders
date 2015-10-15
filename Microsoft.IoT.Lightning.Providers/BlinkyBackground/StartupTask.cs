@@ -33,6 +33,7 @@ namespace BlinkyBackground
             var gpioController = await GpioController.GetDefaultAsync(); /* Get the default GPIO controller on the system */
 
             pin = gpioController.OpenPin(LED_PIN, GpioSharingMode.Exclusive);
+            pin.SetDriveMode(GpioPinDriveMode.Output);
             pin.Write(GpioPinValue.High);
 
             blinkyTimer = ThreadPoolTimer.CreatePeriodicTimer(Timer_Tick, new TimeSpan(TIMER_TICKS_100_NANOS));
