@@ -5,10 +5,6 @@ namespace AdcMcp3008
 {
     public sealed class AdcMcp3008Provider : IAdcProvider
     {
-        AdcMcp3008Provider()
-        {
-        }
-
         static IAdcProvider providerSingleton = null;
 
         static public IAdcProvider GetAdcProvider()

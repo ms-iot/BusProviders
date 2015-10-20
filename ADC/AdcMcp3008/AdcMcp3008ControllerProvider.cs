@@ -107,7 +107,7 @@ namespace AdcMcp3008
             byte command = (byte)channelNumber;
             if (channelMode == ProviderAdcChannelMode.SingleEnded)
             {
-                command |= MCP3008_SingleEnded; ;
+                command |= MCP3008_SingleEnded;
             }
             command <<= 4;
 
