@@ -1,9 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Http;
 using Windows.ApplicationModel.Background;
 using Windows.Devices.Adc;
 using Windows.System.Threading;
@@ -21,14 +17,32 @@ namespace SampleAdcConsumer
         AdcChannel channelThree;
 
         ThreadPoolTimer timer;
-        bool reading = false;
         AdcChannelMode mode;
+
+        enum ADCProviders { Adx1x15, Mcp3008 }
+
+        ADCProviders whichProvider = ADCProviders.Mcp3008;
+
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             deferral = taskInstance.GetDeferral();
             mode = AdcChannelMode.SingleEnded;
             //mode = AdcChannelMode.Differential;
-            AdcController controller = (await AdcController.GetControllersAsync(AdcAds1x15.AdcAds1x15Provider.GetAdcProvider(AdcAds1x15.Ads1x15Type.Ads1115)))[0];
+            AdcController controller = null;
+            switch (whichProvider)
+            {
+                case ADCProviders.Mcp3008:
+                    {
+                        controller = (await AdcController.GetControllersAsync(AdcMcp3008.AdcMcp3008Provider.GetAdcProvider()))[0];
+                    }
+                    break;
+                case ADCProviders.Adx1x15:
+                    {
+                        controller = (await AdcController.GetControllersAsync(AdcAds1x15.AdcAds1x15Provider.GetAdcProvider(AdcAds1x15.Ads1x15Type.Ads1115)))[0];
+                    }
+                    break;
+            };
+
             controller.ChannelMode = mode;
             channelZero = controller.OpenChannel(0);
             channelOne = controller.OpenChannel(1);
