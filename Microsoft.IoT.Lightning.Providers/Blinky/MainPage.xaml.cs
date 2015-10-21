@@ -28,7 +28,7 @@ namespace Blinky
             InitGpio();
         }
 
-        private async void InitGpio()
+        private void InitGpio()
         {
 
             // Set the Lightning Provider as the default if Lightning driver is enabled on the target device
@@ -36,16 +36,18 @@ namespace Blinky
             if (LightningProvider.IsLightningEnabled)
             {
                 LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
+                GpioStatus.Text = "GPIO Using Lightning Provider";
+            }
+            else
+            {
+                GpioStatus.Text = "GPIO Using Default Provider";
             }
 
-            gpioController = await GpioController.GetDefaultAsync(); /* Get the default GPIO controller on the system */
+            gpioController = GpioController.GetDefault(); /* Get the default GPIO controller on the system */
             if (gpioController == null)
             {
-                await CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    BlinkyStartStop.Content = "No GPIO!";
-                    BlinkyStartStop.IsEnabled = false;
-                });
+                GpioStatus.Text += "\nNo GPIO Controller found!";
+                BlinkyStartStop.IsEnabled = false;
             }
         }
 
