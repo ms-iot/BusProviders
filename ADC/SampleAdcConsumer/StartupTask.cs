@@ -3,6 +3,9 @@ using System;
 using Windows.ApplicationModel.Background;
 using Windows.Devices.Adc;
 using Windows.System.Threading;
+using Microsoft.IoT.AdcMcp3008;
+using Windows.Devices.Adc.Provider;
+using System.Collections.Generic;
 
 // The Background Application template is documented at http://go.microsoft.com/fwlink/?LinkID=533884&clcid=0x409
 
@@ -33,7 +36,7 @@ namespace SampleAdcConsumer
             {
                 case ADCProviders.Mcp3008:
                     {
-                        controller = (await AdcController.GetControllersAsync(AdcMcp3008.AdcMcp3008Provider.GetAdcProvider()))[0];
+                        controller = (await AdcController.GetControllersAsync(AdcMcp3008Provider.GetAdcProvider()))[0];
                     }
                     break;
                 case ADCProviders.Adx1x15:
