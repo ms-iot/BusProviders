@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Microsoft.IoT.AdcMcp3008</id>
+    <version>1.0.0.0</version>
+    <title>Adc Provider MCP3008</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>https://github.com/ms-iot/BusProviders/blob/develop/ADC/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/ms-iot/BusProviders</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An Adc provider for the MCP3008 chip.</description>
+    <releaseNotes>New.</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>MCP3008 ADC Provider IoT Microsoft</tags>
+  </metadata>
+</package>
