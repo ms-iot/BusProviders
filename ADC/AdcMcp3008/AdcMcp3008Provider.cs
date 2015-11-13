@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Windows.Devices.Adc.Provider;
 
-namespace AdcMcp3008
+namespace Microsoft.IoT.AdcMcp3008
 {
     public sealed class AdcMcp3008Provider : IAdcProvider
     {
@@ -19,7 +19,7 @@ namespace AdcMcp3008
 
         public IReadOnlyList<IAdcControllerProvider> GetControllers()
         {
-            AdcMcp3008ControllerProvider provider = new AdcMcp3008ControllerProvider();
+            AdcMcp3008ControllerProvider provider = new AdcMcp3008ControllerProvider(AdcMcp3008ControllerProvider.DefaultChipSelectLine);
 
             List<IAdcControllerProvider> list = new List<IAdcControllerProvider>();
             list.Add(provider);

@@ -5,9 +5,9 @@ using Windows.Devices.Adc.Provider;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Spi;
 
-namespace AdcMcp3008
+namespace Microsoft.IoT.AdcMcp3008
 {
-    class AdcMcp3008ControllerProvider : IAdcControllerProvider
+    public sealed class AdcMcp3008ControllerProvider : IAdcControllerProvider
     {
         // Our bus interface to the chip
         private SpiDevice spiController;
@@ -22,10 +22,16 @@ namespace AdcMcp3008
 
         const int DEFAULT_SPI_CHIP_SELECT_LINE = 0;  // SPI0 CS0 pin 24 on the RPi2
 
+        static public int DefaultChipSelectLine
+        {
+            get { return DEFAULT_SPI_CHIP_SELECT_LINE; }
+        }
+
+
         const int MCP3008_Clock = 1350000; 
 
         private readonly Task _initializingTask;
-        public AdcMcp3008ControllerProvider(int chipSelectLine = DEFAULT_SPI_CHIP_SELECT_LINE) : base()
+        public AdcMcp3008ControllerProvider(int chipSelectLine) : base()
         {
             _initializingTask = Init(chipSelectLine);
         }
