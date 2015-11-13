@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherStation", "WeatherSt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PwmConsumer", "PwmConsumer\PwmConsumer.csproj", "{BCE0897D-2ACF-40EC-8B89-CEB91F0A87A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdcConsumer", "AdcConsumer\AdcConsumer.csproj", "{F65085CF-DE77-4A33-8C65-B546B57E2FAB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -141,6 +143,24 @@ Global
 		{BCE0897D-2ACF-40EC-8B89-CEB91F0A87A6}.Release|x86.ActiveCfg = Release|x86
 		{BCE0897D-2ACF-40EC-8B89-CEB91F0A87A6}.Release|x86.Build.0 = Release|x86
 		{BCE0897D-2ACF-40EC-8B89-CEB91F0A87A6}.Release|x86.Deploy.0 = Release|x86
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Debug|ARM.ActiveCfg = Debug|ARM
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Debug|ARM.Build.0 = Debug|ARM
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Debug|ARM.Deploy.0 = Debug|ARM
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Debug|x64.ActiveCfg = Debug|x64
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Debug|x64.Build.0 = Debug|x64
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Debug|x64.Deploy.0 = Debug|x64
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Debug|x86.ActiveCfg = Debug|x86
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Debug|x86.Build.0 = Debug|x86
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Debug|x86.Deploy.0 = Debug|x86
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Release|ARM.ActiveCfg = Release|ARM
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Release|ARM.Build.0 = Release|ARM
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Release|ARM.Deploy.0 = Release|ARM
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Release|x64.ActiveCfg = Release|x64
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Release|x64.Build.0 = Release|x64
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Release|x64.Deploy.0 = Release|x64
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Release|x86.ActiveCfg = Release|x86
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Release|x86.Build.0 = Release|x86
+		{F65085CF-DE77-4A33-8C65-B546B57E2FAB}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

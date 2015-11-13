@@ -77,7 +77,7 @@ const std::map<int, int> RPI2_GPIO_Pins =
 
 IAdcControllerProvider ^ LightningProvider::AdcControllerProvider::get()
 {
-    return ref new LightningAdcControllerProvider();
+    return ref new LightningMCP3008AdcControllerProvider();
 }
 
 IGpioControllerProvider ^ LightningProvider::GpioControllerProvider::get()

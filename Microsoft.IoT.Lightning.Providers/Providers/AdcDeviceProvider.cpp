@@ -22,48 +22,89 @@ IAdcProvider ^ LightningAdcProvider::GetAdcProvider()
 
 #pragma endregion
 
-#pragma region LightningAdcControllerProvider
+#pragma region LightningMCP3008AdcControllerProvider
 
 
-void LightningAdcControllerProvider::AcquireChannel(int channel)
+void LightningMCP3008AdcControllerProvider::AcquireChannel(int channel)
 {
-    throw ref new Platform::NotImplementedException();
+    if (_channelsAcquired[channel])
+    {
+        throw ref new Platform::AccessDeniedException(L"Channel already acquired");
+    }
+
+    _channelsAcquired[channel] = true;
 }
 
-void LightningAdcControllerProvider::ReleaseChannel(int channel)
+void LightningMCP3008AdcControllerProvider::ReleaseChannel(int channel)
 {
-    throw ref new Platform::NotImplementedException();
+    if (!_channelsAcquired[channel])
+    {
+        throw ref new Platform::AccessDeniedException(L"Channel not acquired");
+    }
+
+    _channelsAcquired[channel] = false;
 }
 
-int LightningAdcControllerProvider::ReadValue(int channelNumber)
+int LightningMCP3008AdcControllerProvider::ReadValue(int channelNumber)
 {
-    return 0;
+    if (!_channelsAcquired[channelNumber])
+    {
+        throw ref new Platform::AccessDeniedException(L"Channel not acquired");
+    }
+
+    ULONG value = 0;;
+    ULONG bits = 0;
+    _addOnAdc->readValue(channelNumber, value, bits);
+
+    // Scale the digitized analog value to the currently set analog read resolution.
+    if (_resolutionInBits > (int)bits)
+    {
+        value = value << (_resolutionInBits - (int)bits);
+    }
+    else if ((int)bits > _resolutionInBits)
+    {
+        value = value >> ((int)bits - _resolutionInBits);
+    }
+
+    return (int)value;
 }
 
-LightningAdcControllerProvider::LightningAdcControllerProvider()
+LightningMCP3008AdcControllerProvider::LightningMCP3008AdcControllerProvider() : 
+    _resolutionInBits(MCP3008_ADC_BIT_RESOLUTION)
 {
     Initialize();
 }
 
-void LightningAdcControllerProvider::Initialize()
+LightningMCP3008AdcControllerProvider::~LightningMCP3008AdcControllerProvider()
 {
-    HRESULT hr = g_pins.getBoardType(_boardType);
+    _addOnAdc->end();
+}
+
+void LightningMCP3008AdcControllerProvider::Initialize()
+{
+    BoardPinsClass::BOARD_TYPE boardType;
+    HRESULT hr = g_pins.getBoardType(boardType);
 
     if (FAILED(hr))
     {
         LightningProvider::ThrowError(hr, L"An error occurred determining board type.");
     }
 
-    if (!(_boardType == BoardPinsClass::BOARD_TYPE::MBM_BARE ||
-        _boardType == BoardPinsClass::BOARD_TYPE::PI2_BARE))
+    if (!(boardType == BoardPinsClass::BOARD_TYPE::MBM_BARE ||
+        boardType == BoardPinsClass::BOARD_TYPE::PI2_BARE))
     {
         throw ref new Platform::NotImplementedException(L"This board type has not been implemented.");
     }
 
-    ULONG pinCount = 0;
+    _addOnAdc.reset(new MCP3008Device());
 
+    hr = _addOnAdc->begin();
+    if (FAILED(hr))
+    {
+        LightningProvider::ThrowError(hr, L"An error occurred Initializing ADC.");
+    }
 
-    _pinCount = (USHORT)pinCount;
+    _channelsAcquired.resize(MCP3008_ADC_CHANNEL_COUNT, false);
 }
 
 IVectorView<IAdcControllerProvider^>^ LightningAdcProvider::GetControllers(
@@ -71,7 +112,7 @@ IVectorView<IAdcControllerProvider^>^ LightningAdcProvider::GetControllers(
     )
 {
     auto controllerCollection = ref new Vector<IAdcControllerProvider^>();
-    controllerCollection->Append(ref new LightningAdcControllerProvider());
+    controllerCollection->Append(ref new LightningMCP3008AdcControllerProvider());
     return controllerCollection->GetView();
 }
 

@@ -93,7 +93,7 @@ void LightningSoftwarePwmControllerProvider::AcquirePin(int pin)
 
     if (_pins->GetAt(pin) != nullptr)
     {
-        throw ref new Platform::AccessDeniedException();
+        throw ref new Platform::AccessDeniedException(L"Pin already acquired");
     }
 
     // Open the chip select pin
@@ -118,7 +118,7 @@ void LightningSoftwarePwmControllerProvider::EnablePin(int pin)
     auto pwmPin = _pins->GetAt(pin);
     if (pwmPin == nullptr)
     {
-        throw ref new Platform::AccessDeniedException();
+        throw ref new Platform::AccessDeniedException(L"Pin was not acquired");
     }
 
     pwmPin->Enabled = true;
@@ -129,7 +129,7 @@ void LightningSoftwarePwmControllerProvider::DisablePin(int pin)
     auto pwmPin = _pins->GetAt(pin);
     if (pwmPin == nullptr)
     {
-        throw ref new Platform::AccessDeniedException();
+        throw ref new Platform::AccessDeniedException(L"Pin was not acquired");
     }
 
     pwmPin->Enabled = false;
@@ -140,7 +140,7 @@ void LightningSoftwarePwmControllerProvider::SetPulseParameters(int pin, double 
     auto pwmPin = _pins->GetAt(pin);
     if (pwmPin == nullptr)
     {
-        throw ref new Platform::AccessDeniedException();
+        throw ref new Platform::AccessDeniedException(L"Pin was not acquired");
     }
 
     pwmPin->DutyCycle = dutyCycle;
@@ -234,7 +234,7 @@ void LightningPCA9685PwmControllerProvider::AcquirePin(int pin)
 {
     if (_pins->GetAt(pin) != nullptr)
     {
-        throw ref new Platform::AccessDeniedException();
+        throw ref new Platform::AccessDeniedException(L"Pin already acquired");
     }
 
     _pins->SetAt(pin, ref new LightningPCA9685PwmPin());
@@ -244,7 +244,7 @@ void LightningPCA9685PwmControllerProvider::ReleasePin(int pin)
 {
     if (_pins->GetAt(pin) == nullptr)
     {
-        throw ref new Platform::AccessDeniedException();
+        throw ref new Platform::AccessDeniedException(L"Pin was not acquired");
     }
     _pins->SetAt(pin, nullptr);
 }
@@ -252,6 +252,10 @@ void LightningPCA9685PwmControllerProvider::ReleasePin(int pin)
 void LightningPCA9685PwmControllerProvider::EnablePin(int pin)
 {
     auto pwmPin = _pins->GetAt(pin);
+    if (pwmPin == nullptr)
+    {
+        throw ref new Platform::AccessDeniedException(L"Pin was not acquired");
+    }
 
     // Set the PWM duty cycle.
     ULONGLONG scaledDutyCycle = scaleDutyCycle(pwmPin->DutyCycle, pwmPin->InvertPolarity);
@@ -265,6 +269,10 @@ void LightningPCA9685PwmControllerProvider::EnablePin(int pin)
 
 void LightningPCA9685PwmControllerProvider::DisablePin(int pin)
 {
+    if (_pins->GetAt(pin) == nullptr)
+    {
+        throw ref new Platform::AccessDeniedException(L"Pin was not acquired");
+    }
     HRESULT hr = g_pins.setPwmDutyCycle(GetIoPin(pin), 0);
     if (FAILED(hr))
     {
@@ -296,15 +304,16 @@ LightningPCA9685PwmControllerProvider::LightningPCA9685PwmControllerProvider() :
 
 void LightningPCA9685PwmControllerProvider::Initialize()
 {
-    HRESULT hr = g_pins.getBoardType(_boardType);
+    BoardPinsClass::BOARD_TYPE boardType;
+    HRESULT hr = g_pins.getBoardType(boardType);
 
     if (FAILED(hr))
     {
         LightningProvider::ThrowError(hr, L"An error occurred determining board type.");
     }
 
-    if (!(_boardType == BoardPinsClass::BOARD_TYPE::MBM_BARE ||
-        _boardType == BoardPinsClass::BOARD_TYPE::PI2_BARE))
+    if (!(boardType == BoardPinsClass::BOARD_TYPE::MBM_BARE ||
+        boardType == BoardPinsClass::BOARD_TYPE::PI2_BARE))
     {
         throw ref new Platform::NotImplementedException(L"This board type has not been implemented.");
     }

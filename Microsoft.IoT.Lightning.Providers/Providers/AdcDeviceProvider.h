@@ -1,6 +1,13 @@
 // Copyright (c) Microsoft. All rights reserved.
 #pragma once
 
+#include <MCP3008support.h>
+
+#define MCP3008_ADC_CHANNEL_COUNT 8
+#define MCP3008_ADC_MIN 0
+#define MCP3008_ADC_MAX 1023
+#define MCP3008_ADC_BIT_RESOLUTION 10
+
 using namespace Windows::Devices::Adc::Provider;
 
 namespace Microsoft {
@@ -19,22 +26,22 @@ namespace Microsoft {
                     static IAdcProvider^ providerSingleton;
                 };
 
-                public ref class LightningAdcControllerProvider sealed : public IAdcControllerProvider
+                public ref class LightningMCP3008AdcControllerProvider sealed : public IAdcControllerProvider
                 {
                 public:
                     // Inherited via IAdcControllerProvider
                     virtual property int ChannelCount
                     {
-                        int get() { return _channelCount; }
+                        int get() { return MCP3008_ADC_CHANNEL_COUNT; }
                     }
 
                     virtual property int MaxValue
                     {
-                        int get() { return _maxValue; }
+                        int get() { return MCP3008_ADC_MAX; }
                     }
                     virtual property int MinValue
                     {
-                        int get() { return _minValue; }
+                        int get() { return MCP3008_ADC_MIN; }
                     }
 
                     virtual property int ResolutionInBits
@@ -66,18 +73,19 @@ namespace Microsoft {
 
                     virtual int ReadValue(int channelNumber);
 
+                    virtual ~LightningMCP3008AdcControllerProvider();
+
                 internal:
-                    LightningAdcControllerProvider();
+                    LightningMCP3008AdcControllerProvider();
 
                 private:
-                    unsigned short _pinCount;
-                    int _channelCount;
-                    int _maxValue;
-                    int _minValue;
+                    std::shared_ptr<MCP3008Device> _addOnAdc;
+                    std::vector<bool> _channelsAcquired;
                     int _resolutionInBits;
                     ProviderAdcChannelMode _channelMode;
-                    BoardPinsClass::BOARD_TYPE _boardType;
+
                     void Initialize();
+
                 };
             }
         }

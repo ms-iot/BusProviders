@@ -155,9 +155,7 @@ namespace Microsoft {
 
                 private:
                     double _desiredFrequency;
-
                     Platform::Collections::Vector<LightningPCA9685PwmPin^>^ _pins;
-                    BoardPinsClass::BOARD_TYPE _boardType;
 
                     property double Period
                     {

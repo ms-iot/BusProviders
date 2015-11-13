@@ -1,4 +1,6 @@
-﻿using Microsoft.IoT.Lightning.Providers;
+﻿// Copyright (c) Microsoft. All rights reserved.
+
+using Microsoft.IoT.Lightning.Providers;
 using System;
 using Windows.ApplicationModel.Background;
 using Windows.Devices.Pwm;
@@ -28,15 +30,23 @@ namespace PwmConsumer
             if (!LightningProvider.IsLightningEnabled)
             {
                 // Lightning provider is required for this sample
+                deferral.Complete();
                 return;
             }
-            pwmController = (await PwmController.GetControllersAsync(LightningPwmProvider.GetPwmProvider()))[0]; // [0]: LightningPCA9685PwmControllerProvider (selected)
-                                                                                                                 // [1]: LightningSoftwarePwmControllerProvider
+
+            //// Use the PAC9685 PWM provider
+            //pwmController = (await PwmController.GetControllersAsync(LightningPwmProvider.GetPwmProvider()))[0]; // [0]: LightningPCA9685PwmControllerProvider (selected)
+            //motorPin = pwmController.OpenPin(0);
+            //secondMotorPin = pwmController.OpenPin(1);
+
+            // To use the software PWM provider, with GPIO pins 5 and 6, uncomment the following lines and comment the lines above
+            pwmController = (await PwmController.GetControllersAsync(LightningPwmProvider.GetPwmProvider()))[1]; // [1]: LightningSoftwarePwmControllerProvider
+            motorPin = pwmController.OpenPin(5);
+            secondMotorPin = pwmController.OpenPin(6);
+
             pwmController.SetDesiredFrequency(50);
-            motorPin = pwmController.OpenPin(0);
             motorPin.SetActiveDutyCyclePercentage(RestingPulseLegnth);
             motorPin.Start();
-            secondMotorPin = pwmController.OpenPin(1);
             secondMotorPin.SetActiveDutyCyclePercentage(RestingPulseLegnth);
             secondMotorPin.Start();
 
