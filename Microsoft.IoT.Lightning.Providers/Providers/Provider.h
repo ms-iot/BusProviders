@@ -52,6 +52,7 @@ namespace Microsoft {
 
                 internal:
                     static void ThrowError(HRESULT hr, LPCWSTR errorMessage);
+                    static int MapGpioPin(BoardPinsClass::BOARD_TYPE boardType, int pin);
                
                 private:
                     LightningProvider() { }

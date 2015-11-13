@@ -24,6 +24,8 @@
     <ClInclude Include="Dummy.h">
       <Filter>Dependencies</Filter>
     </ClInclude>
+    <ClInclude Include="AdcDeviceProvider.h" />
+    <ClInclude Include="PwmDeviceProvider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

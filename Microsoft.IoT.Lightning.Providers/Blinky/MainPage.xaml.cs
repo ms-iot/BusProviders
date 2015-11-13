@@ -1,5 +1,6 @@
 ﻿using Microsoft.IoT.Lightning.Providers;
 using System;
+using System.Threading.Tasks;
 using Windows.Devices;
 using Windows.Devices.Gpio;
 using Windows.System.Threading;
@@ -15,13 +16,14 @@ namespace Blinky
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private readonly int LED_PIN = 5;
+        // On Raspberry Pi 2, pin 47 is the built in LED
+        // On Other devices, the pin number should be changed
+        private readonly int LED_PIN = 47;
         private long currentTicks = 500; // every 500 msec
         private ThreadPoolTimer blinkyTimer;
-        private int LEDStatus = 0;
         private bool blinkyStarted = false;
         private GpioPin pin = null;
-        private GpioController gpioController = null;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -35,6 +37,7 @@ namespace Blinky
             // Otherwise, the inbox provider will continue to be the default
             if (LightningProvider.IsLightningEnabled)
             {
+                // Set Lightning as the default provider
                 LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
                 GpioStatus.Text = "GPIO Using Lightning Provider";
             }
@@ -43,54 +46,46 @@ namespace Blinky
                 GpioStatus.Text = "GPIO Using Default Provider";
             }
 
-            gpioController = GpioController.GetDefault(); /* Get the default GPIO controller on the system */
+            var gpioController = GpioController.GetDefault(); /* Get the default GPIO controller on the system */
             if (gpioController == null)
             {
                 GpioStatus.Text += "\nNo GPIO Controller found!";
                 BlinkyStartStop.IsEnabled = false;
             }
+
+            pin = gpioController.OpenPin(LED_PIN, GpioSharingMode.Exclusive);
+            pin.SetDriveMode(GpioPinDriveMode.Output);
         }
 
         private void Timer_Tick(ThreadPoolTimer timer)
         {
             if (pin == null)
-                return;
-
-            if (LEDStatus == 0)
             {
-                LEDStatus = 1;
-                pin.Write(GpioPinValue.High);
+                return;
+            }
+
+            if (pin.Read() == GpioPinValue.High)
+            {
+                pin.Write(GpioPinValue.Low);
             }
             else
             {
-                LEDStatus = 0;
-                pin.Write(GpioPinValue.Low);
+                pin.Write(GpioPinValue.High);
             }
         }
 
         private async void Start()
         {
-            if (gpioController == null)
-            {
-                return;
-            }
-
-            pin = gpioController.OpenPin(LED_PIN, GpioSharingMode.Exclusive);
-            pin.SetDriveMode(GpioPinDriveMode.Output);
-            pin.Write(GpioPinValue.High);
-
             blinkyTimer = ThreadPoolTimer.CreatePeriodicTimer(Timer_Tick, TimeSpan.FromMilliseconds(currentTicks));
+            blinkyStarted = true;
 
             await CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 BlinkyStartStop.Content = "Stop Blinky";
             });
-
-            blinkyStarted = true;
-
         }
 
-        private async void Stop()
+        private async Task Stop()
         {
             blinkyTimer.Cancel();
             blinkyStarted = false;
@@ -98,7 +93,7 @@ namespace Blinky
             if (pin != null)
             {
                 pin.Write(GpioPinValue.Low);
-                pin = null;
+
                 await CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     BlinkyStartStop.Content = "Start Blinky";
@@ -107,26 +102,26 @@ namespace Blinky
         }
 
 
-        private void BlinkyStartStop_Click(object sender, RoutedEventArgs e)
+        private async void BlinkyStartStop_Click(object sender, RoutedEventArgs e)
         {
-            if (pin == null)
+            if (blinkyStarted)
             {
-                Start();
+                await Stop();
             }
             else
             {
-                Stop();
+                Start();
             }
         }
 
         private async void Delay_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            await CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await CoreWindow.GetForCurrentThread().Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                if (e.NewValue == Delay.Minimum)
+                if (e.NewValue <= Delay.Minimum)
                 {
                     DelayText.Text = "BlinkyStopped";
-                    Stop();
+                    await Stop();
                 }
                 else
                 {
@@ -134,7 +129,7 @@ namespace Blinky
                     currentTicks = (long)e.NewValue;
                     if (blinkyStarted)
                     {
-                        Stop();
+                        await Stop();
                         Start();
                     }
                 }
