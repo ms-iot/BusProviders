@@ -95,12 +95,10 @@ void LightningGpioPinProvider::SetDriveMode(
     ProviderGpioPinDriveMode value
     )
 {
-    if (_DriveMode == value)
+    if (_DriveMode != value)
     {
-        return; // Already set
+        SetDriveModeInternal(value);
     }
-
-    SetDriveModeInternal(value);
 }
 
 
