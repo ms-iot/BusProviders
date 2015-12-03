@@ -134,8 +134,6 @@ ProviderI2cTransferResult LightningI2cDeviceProvider::WritePartial(const Platfor
     HRESULT hr = _i2cTransaction->queueWrite(buffer->Data, buffer->Length);
     if (FAILED(hr))
     {
-        // Clean out the transaction so it can be used again in the future.
-        _i2cTransaction->reset();
         LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
     }
 
@@ -166,7 +164,6 @@ ProviderI2cTransferResult LightningI2cDeviceProvider::WritePartial(const Platfor
         result.Status = ProviderI2cTransferStatus::PartialTransfer;
     }
 
-    _i2cTransaction->reset();
     return result;
 }
 
@@ -180,8 +177,6 @@ ProviderI2cTransferResult LightningI2cDeviceProvider::ReadPartial(Platform::Writ
     HRESULT hr = _i2cTransaction->queueRead(buffer->Data, buffer->Length);
     if (FAILED(hr))
     {
-        // Clean out the transaction so it can be used again in the future.
-        _i2cTransaction->reset();
         LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
     }
 
@@ -226,16 +221,12 @@ ProviderI2cTransferResult LightningI2cDeviceProvider::WriteReadPartial(const Pla
     HRESULT hr = _i2cTransaction->queueWrite(writeBuffer->Data, writeBuffer->Length);
     if (FAILED(hr))
     {
-        // Clean out the transaction so it can be used again in the future.
-        _i2cTransaction->reset();
         LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
     }
 
     hr = _i2cTransaction->queueRead(readBuffer->Data, readBuffer->Length);
     if (FAILED(hr))
     {
-        // Clean out the transaction so it can be used again in the future.
-        _i2cTransaction->reset();
         LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
     }
 
@@ -244,7 +235,7 @@ ProviderI2cTransferResult LightningI2cDeviceProvider::WriteReadPartial(const Pla
     if (SUCCEEDED(hr) && !_i2cTransaction->isIncomplete())
     {
         result.Status = ProviderI2cTransferStatus::FullTransfer;
-        result.BytesTransferred = writeBuffer->Length;
+        result.BytesTransferred = writeBuffer->Length + readBuffer->Length;
     }
     else if (FAILED(hr))
     {
@@ -267,6 +258,79 @@ ProviderI2cTransferResult LightningI2cDeviceProvider::WriteReadPartial(const Pla
     }
 
     return result;
+}
+
+void LightningI2cDeviceProvider::Write(const Platform::Array<unsigned char>^ buffer)
+{
+    _i2cTransaction->reset();
+
+    HRESULT hr = _i2cTransaction->queueWrite(buffer->Data, buffer->Length);
+    if (FAILED(hr))
+    {
+        // Clean out the transaction so it can be used again in the future.
+        LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
+    }
+
+    hr = _i2cTransaction->execute(_I2cController.get());
+
+    if (FAILED(hr))
+    {
+        LightningProvider::ThrowError(hr, L"Transfer failed.");
+    }
+    else if (_i2cTransaction->isIncomplete())
+    {
+        LightningProvider::ThrowError(E_ABORT, L"Transfer incomplete.");
+    }
+}
+
+void LightningI2cDeviceProvider::Read(Platform::WriteOnlyArray<unsigned char>^ buffer)
+{
+    _i2cTransaction->reset();
+    HRESULT hr = _i2cTransaction->queueRead(buffer->Data, buffer->Length);
+    if (FAILED(hr))
+    {
+        LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
+    }
+
+    hr = _i2cTransaction->execute(_I2cController.get());
+
+    if (FAILED(hr))
+    {
+        LightningProvider::ThrowError(hr, L"Transfer failed.");
+    }
+    else if (_i2cTransaction->isIncomplete())
+    {
+        LightningProvider::ThrowError(E_ABORT, L"Transfer incomplete.");
+    }
+}
+
+void LightningI2cDeviceProvider::WriteRead(const Platform::Array<unsigned char>^ writeBuffer, Platform::WriteOnlyArray<unsigned char>^ readBuffer)
+{
+    _i2cTransaction->reset();
+
+    HRESULT hr = _i2cTransaction->queueWrite(writeBuffer->Data, writeBuffer->Length);
+    if (FAILED(hr))
+    {
+        LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
+    }
+
+    hr = _i2cTransaction->queueRead(readBuffer->Data, readBuffer->Length);
+    if (FAILED(hr))
+    {
+        LightningProvider::ThrowError(hr, L"Could not queue I2c transaction.");
+    }
+
+    hr = _i2cTransaction->execute(_I2cController.get());
+
+    if (FAILED(hr))
+    {
+        LightningProvider::ThrowError(hr, L"Transfer failed.");
+    }
+    else if (_i2cTransaction->isIncomplete())
+    {
+        LightningProvider::ThrowError(E_ABORT, L"Transfer incomplete.");
+    }
+
 }
 
 LightningI2cDeviceProvider::~LightningI2cDeviceProvider()

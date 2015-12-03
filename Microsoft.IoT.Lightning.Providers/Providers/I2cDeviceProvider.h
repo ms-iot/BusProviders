@@ -54,23 +54,14 @@ namespace Microsoft {
                         Platform::WriteOnlyArray<unsigned char> ^readBuffer);
 
                     virtual void Write(
-                        const Platform::Array<unsigned char> ^buffer)
-                    {
-                        throw ref new Platform::NotImplementedException();
-                    }
+                        const Platform::Array<unsigned char> ^buffer);
 
                     virtual void Read(
-                        Platform::WriteOnlyArray<unsigned char> ^buffer)
-                    {
-                        throw ref new Platform::NotImplementedException();
-                    }
+                        Platform::WriteOnlyArray<unsigned char> ^buffer);
 
                     virtual void WriteRead(
                         const Platform::Array<unsigned char> ^writeBuffer,
-                        Platform::WriteOnlyArray<unsigned char> ^readBuffer)
-                    {
-                        throw ref new Platform::NotImplementedException();
-                    }
+                        Platform::WriteOnlyArray<unsigned char> ^readBuffer);
 
                     virtual ~LightningI2cDeviceProvider();
 

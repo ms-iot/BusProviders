@@ -24,7 +24,7 @@
             <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock x:Name="DelayText" Text="500ms" Margin="10" TextAlignment="Center" FontSize="26.667" />
                     <Slider x:Name="Delay" Width="200" Value="500" Maximum="1000" LargeChange="100" SmallChange="10" Margin="10" ValueChanged="Delay_ValueChanged" StepFrequency="10"/>
-                    <TextBlock x:Name="GpioStatus" Margin="10,10,10,10" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" />
+                    <TextBlock x:Name="GpioStatus" Margin="10,10,10,10" Height="100" Width="200" Foreground="DarkBlue"/>
                 </StackPanel>
             </Grid>
     </Grid>

@@ -24,11 +24,10 @@
     <ClInclude Include="Dummy.h">
       <Filter>Dependencies</Filter>
     </ClInclude>
+    <ClInclude Include="AdcDeviceProvider.h" />
+    <ClInclude Include="PwmDeviceProvider.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Windows.Devices.DevicesLowLevelContract.winmd">
-      <Filter>Dependencies</Filter>
-    </None>
     <None Include="packages.config">
       <Filter>Dependencies</Filter>
     </None>

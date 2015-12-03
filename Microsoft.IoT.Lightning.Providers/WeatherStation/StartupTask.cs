@@ -23,12 +23,13 @@ namespace WeatherStation
             // Otherwise, the inbox provider will continue to be the default
             if (LightningProvider.IsLightningEnabled)
             {
+                // Set Lightning as the default provider
                 LowLevelDevicesController.DefaultProvider = LightningProvider.GetAggregateProvider();
             }
 
             // The code below should work the same with any provider, including Lightning and the default one.
             I2cController controller = await I2cController.GetDefaultAsync();
-            //Ox40 was determined by looking at the datasheet for the device
+            // Ox40 was determined by looking at the datasheet for the Weather shield
             sensor = controller.GetDevice(new I2cConnectionSettings(0x40));
 
             timer = ThreadPoolTimer.CreatePeriodicTimer(Timer_Tick, TimeSpan.FromMilliseconds(1000));
