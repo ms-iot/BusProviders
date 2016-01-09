@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 #pragma once
 
+#include "ArduinoConnectionConfiguration.h"
+#include "ArduinoConnection.h"
+
 using namespace Windows::Devices;
 using namespace Windows::Devices::Adc::Provider;
 using namespace Windows::Devices::Pwm::Provider;
@@ -36,5 +39,19 @@ namespace ArduinoProviders
             ISpiControllerProvider ^get();
         }
 
-    };
+	public:
+		ArduinoProvider()
+		{
+			_Created = true;
+		}
+
+		static property ArduinoConnectionConfiguration^ Configuration
+		{
+			ArduinoConnectionConfiguration^ get();
+			void set(ArduinoConnectionConfiguration^ value);
+		}
+
+	private:
+		static bool _Created;
+	};
 }

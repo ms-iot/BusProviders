@@ -9,6 +9,8 @@
 
 using namespace ArduinoProviders;
 
+bool ArduinoProvider::_Created = false;
+
 IAdcControllerProvider ^ ArduinoProvider::AdcControllerProvider::get()
 {
     return ref new ArduinoAdcControllerProvider();
@@ -28,4 +30,18 @@ IPwmControllerProvider ^ ArduinoProvider::PwmControllerProvider::get()
 ISpiControllerProvider ^ ArduinoProvider::SpiControllerProvider::get()
 {
     return nullptr;
+}
+
+ArduinoConnectionConfiguration^ ArduinoProvider::Configuration::get()
+{
+	return ArduinoConnection::Configuration;
+}
+
+void ArduinoProvider::Configuration::set(ArduinoConnectionConfiguration ^value)
+{
+	if (ArduinoProvider::_Created)
+	{
+		throw ref new Platform::Exception(E_ACCESSDENIED, L"Cannot change connection properties after a provider has been created");
+	}
+	ArduinoConnection::Configuration = value;
 }
