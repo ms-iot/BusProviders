@@ -34,14 +34,14 @@ ISpiControllerProvider ^ ArduinoProvider::SpiControllerProvider::get()
 
 ArduinoConnectionConfiguration^ ArduinoProvider::Configuration::get()
 {
-	return ArduinoConnection::Configuration;
+    return ArduinoConnection::Configuration;
 }
 
 void ArduinoProvider::Configuration::set(ArduinoConnectionConfiguration ^value)
 {
-	if (ArduinoProvider::_Created)
-	{
-		throw ref new Platform::Exception(E_ACCESSDENIED, L"Cannot change connection properties after a provider has been created");
-	}
-	ArduinoConnection::Configuration = value;
+    if (ArduinoProvider::_Created)
+    {
+        throw ref new Platform::Exception(E_ACCESSDENIED, L"Cannot change connection properties after a provider has been created");
+    }
+    ArduinoConnection::Configuration = value;
 }

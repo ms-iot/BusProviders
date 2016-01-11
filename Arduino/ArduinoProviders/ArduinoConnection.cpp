@@ -17,20 +17,20 @@ bool ArduinoConnection::Connected::get()
 
 ArduinoConnectionConfiguration^ ArduinoConnection::Configuration::get()
 {
-	if (nullptr == _ArduinoConnectionConfiguration)
-	{
-		_ArduinoConnectionConfiguration = ref new ArduinoConnectionConfiguration();
-	}
-	return _ArduinoConnectionConfiguration;
+    if (nullptr == _ArduinoConnectionConfiguration)
+    {
+        _ArduinoConnectionConfiguration = ref new ArduinoConnectionConfiguration();
+    }
+    return _ArduinoConnectionConfiguration;
 }
 
 void ArduinoConnection::Configuration::set(ArduinoConnectionConfiguration^ value)
 {
-	if (nullptr != _Arduino)
-	{
-		throw ref new Platform::Exception(E_ACCESSDENIED, L"Cannot change connection properties after a connection has been established");
-	}
-	_ArduinoConnectionConfiguration = value;
+    if (nullptr != _Arduino)
+    {
+        throw ref new Platform::Exception(E_ACCESSDENIED, L"Cannot change connection properties after a connection has been established");
+    }
+    _ArduinoConnectionConfiguration = value;
 }
 
 RemoteDevice^ ArduinoConnection::Arduino::get()
@@ -52,7 +52,7 @@ RemoteDevice^ ArduinoConnection::Arduino::get()
             throw ref new Platform::Exception(E_FAIL, message);
         });
 
-		int baudRate = Configuration->BaudRate;
+        int baudRate = Configuration->BaudRate;
         _Usb->begin(baudRate, SerialConfig::SERIAL_8N1);
 
         while (!_Connected)

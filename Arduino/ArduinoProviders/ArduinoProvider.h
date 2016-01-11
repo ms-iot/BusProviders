@@ -42,16 +42,16 @@ namespace ArduinoProviders
 	public:
 		ArduinoProvider()
 		{
-			_Created = true;
+            _Created = true;
 		}
 
-		static property ArduinoConnectionConfiguration^ Configuration
-		{
-			ArduinoConnectionConfiguration^ get();
-			void set(ArduinoConnectionConfiguration^ value);
-		}
+        static property ArduinoConnectionConfiguration^ Configuration
+        {
+            ArduinoConnectionConfiguration^ get();
+            void set(ArduinoConnectionConfiguration^ value);
+        }
 
-	private:
-		static bool _Created;
+    private:
+        static bool _Created;
 	};
 }

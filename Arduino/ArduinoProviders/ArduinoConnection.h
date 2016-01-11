@@ -20,14 +20,14 @@ namespace ArduinoProviders
         static property RemoteDevice^ Arduino { RemoteDevice^ get(); }
         static property bool Connected { bool get(); }
 
-		static property ArduinoConnectionConfiguration^ Configuration
-		{
-			ArduinoConnectionConfiguration^ get();
-			void set(ArduinoConnectionConfiguration^ value);
-		}
+        static property ArduinoConnectionConfiguration^ Configuration
+        {
+            ArduinoConnectionConfiguration^ get();
+            void set(ArduinoConnectionConfiguration^ value);
+        }
 
-	private:
-		static ArduinoConnectionConfiguration ^_ArduinoConnectionConfiguration;
+    private:
+        static ArduinoConnectionConfiguration ^_ArduinoConnectionConfiguration;
 
         static UsbSerial ^_Usb;
         static RemoteDevice ^_Arduino;
