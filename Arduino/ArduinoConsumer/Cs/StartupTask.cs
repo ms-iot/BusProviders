@@ -20,6 +20,8 @@ namespace ArduinoConsumer
             deferral = taskInstance.GetDeferral();
             _FanOn = true;
 
+            ArduinoProviders.ArduinoProvider.Configuration = 
+                new ArduinoProviders.ArduinoConnectionConfiguration("VID_2341", "PID_0043", 57600);
             LowLevelDevicesController.DefaultProvider = new ArduinoProviders.ArduinoProvider();
 
             //

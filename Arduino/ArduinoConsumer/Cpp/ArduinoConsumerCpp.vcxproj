@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{f297b44d-700e-4f77-996a-0374e80e9419}</ProjectGuid>
@@ -235,7 +235,7 @@
     <ProjectReference Include="..\..\..\..\remote-wiring-develop\Microsoft.Maker.win10\Microsoft.Maker.RemoteWiring\Microsoft.Maker.RemoteWiring.vcxproj">
       <Project>{5a8b1bb1-7cd5-47c4-a1f7-d7bcf5facad1}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\remote-wiring-develop\Microsoft.Maker.win10\Microsoft.Maker.Serial\Microsoft.Maker.Serial.vcxproj">
+    <ProjectReference Include="..\..\..\..\serial-wiring-develop\Microsoft.Maker.Serial.win10\Microsoft.Maker.Serial.vcxproj">
       <Project>{8376216c-282a-4927-b9ef-c2d545fe0bca}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\ArduinoProviders\ArduinoProviders.vcxproj">

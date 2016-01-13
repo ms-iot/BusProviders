@@ -22,7 +22,9 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
     _Deferral = taskInstance->GetDeferral();
     _FanOn = true;
 
-    Windows::Devices::LowLevelDevicesController::DefaultProvider = ref new ArduinoProviders::ArduinoProvider();
+	ArduinoProviders::ArduinoProvider::Configuration =
+		ref new ArduinoProviders::ArduinoConnectionConfiguration("VID_2341", "PID_0043", 57600);
+	Windows::Devices::LowLevelDevicesController::DefaultProvider = ref new ArduinoProviders::ArduinoProvider();
 
     TimeSpan interval;
     interval.Duration = 50 * 1000 * 10;
