@@ -1,4 +1,4 @@
-# Microsoft.Iot.Lightning.Providers
+﻿# Microsoft.Iot.Lightning.Providers
  Windows IoT Core WinRT Bus Provider Library for Lightning. 
 
 ## Using the Microsoft.Iot.Lightning.Providers library and sample code
@@ -36,6 +36,12 @@ spiController = await SpiController.GetDefaultAsync();
 
 After you have a controller for the desired bus, you can use it as you normally would. If you want to use a different default provider, the sections below show how you can use the Lightning providers for individual busses. 
 
+You also need to update your manifest to include the required capabilities to use the Lightning driver. You will need to view the source of the "Package.appxmanifest" file in your projects and add the following lines to the end of the <Capabilities> section of the manifest:
+
+    <iot:Capability Name="lowLevelDevices" />
+    <DeviceCapability Name="109b86ad-f53d-4b76-aa5f-821e2ddf2141"/>
+
+To see a complete manifest that includes these capabilities, you can look at this file in the BlinkyBackground sample. 
 
 ### For GPIO
 ```C#
