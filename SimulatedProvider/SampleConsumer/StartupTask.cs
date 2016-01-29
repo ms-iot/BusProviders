@@ -1,10 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Http;
 using Windows.ApplicationModel.Background;
 using Windows.Devices;
 using Windows.Devices.Gpio;
@@ -19,20 +15,20 @@ namespace SampleConsumer
 {
     public sealed class StartupTask : IBackgroundTask
     {
-        const bool UseSimulatedBusses = true;
+        private const bool UseSimulatedBusses = true;
         private BackgroundTaskDeferral deferral;
 
         private GpioPin pin;
         private GpioPinValue pinValue = GpioPinValue.High;
 
         private I2cDevice tempSensor;
-        ThreadPoolTimer timer;
+        private ThreadPoolTimer timer;
 
-        AdcChannel adcChannel;
+        private AdcChannel adcChannel;
 
-        PwmPin pwmPin;
+        private PwmPin pwmPin;
 
-        SpiDevice spiDevice;
+        private SpiDevice spiDevice;
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
