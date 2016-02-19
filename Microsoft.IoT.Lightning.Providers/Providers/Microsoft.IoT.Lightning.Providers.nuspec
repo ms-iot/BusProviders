@@ -16,12 +16,8 @@
 
     <files>
 
-      <file target="build\native\Microsoft.IoT.Lightning.Providers.targets"   src="Microsoft.IoT.Lightning.Providers.targets" />
-      <file target="lib\uap10.0\Microsoft.IoT.Lightning.Providers.winmd"      src="$root$\Release\x86\Microsoft.IoT.Lightning.Providers.winmd" />
-
-      <file target="runtimes\win10-arm\native\Microsoft.IoT.Lightning.Providers.dll" src="$root$\Release\ARM\signed\Microsoft.IoT.Lightning.Providers.dll" />
-      <file target="runtimes\win10-x86\native\Microsoft.IoT.Lightning.Providers.dll" src="$root$\Release\x86\signed\Microsoft.IoT.Lightning.Providers.dll" />
-      <file target="runtimes\win10-x64\native\Microsoft.IoT.Lightning.Providers.dll" src="$root$\Release\x64\signed\Microsoft.IoT.Lightning.Providers.dll" />
+      <file target="lib\uap10.0\Microsoft.IoT.Lightning.Providers.winmd"             src="Microsoft.IoT.Lightning.Providers.winmd" />
+      <file target="runtimes\win10-x86\native\Microsoft.IoT.Lightning.Providers.dll" src="Microsoft.IoT.Lightning.Providers.dll" />
 
     </files>
 </package>

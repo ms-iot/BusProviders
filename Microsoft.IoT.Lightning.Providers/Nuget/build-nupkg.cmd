@@ -19,7 +19,7 @@ if "%CLEAN%"=="1" goto end
 :: skip packaging step if requested
 if "%NOPACK%"=="1" goto end
 
-SET ROOT="..\Providers"
+SET ROOT="."
 
 echo Creating NuGet Package
 nuget help > NUL
@@ -27,7 +27,7 @@ IF ERRORLEVEL 1 (
     echo Please install nuget.exe from http://nuget.org
     goto err
 )
-nuget pack Microsoft.IoT.Lightning.Providers.nuspec -properties root=%ROOT% || goto err
+nuget pack Microsoft.IoT.Lightning.Providers.nuspec -properties root=%ROOT% -NoPackageAnalysis || goto err
 
 :end
 
