@@ -245,13 +245,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="..\packages\Microsoft.IoT.SDKFromArduino.1.1.1\build\native\Microsoft.IoT.SDKFromArduino.targets" Condition="Exists('..\packages\Microsoft.IoT.SDKFromArduino.1.1.1\build\native\Microsoft.IoT.SDKFromArduino.targets')" />
+  <Import Project="$(SolutionDir)packages\Microsoft.IoT.SDKFromArduino.1.1.1\build\native\Microsoft.IoT.SDKFromArduino.targets" Condition="Exists('$(SolutionDir)packages\Microsoft.IoT.SDKFromArduino.1.1.1\build\native\Microsoft.IoT.SDKFromArduino.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.IoT.SDKFromArduino.1.1.1\build\native\Microsoft.IoT.SDKFromArduino.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.IoT.SDKFromArduino.1.1.1\build\native\Microsoft.IoT.SDKFromArduino.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.IoT.Lightning.1.0.2-alpha\build\native\Microsoft.IoT.Lightning.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.IoT.Lightning.1.0.2-alpha\build\native\Microsoft.IoT.Lightning.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)packages\Microsoft.IoT.SDKFromArduino.1.1.1\build\native\Microsoft.IoT.SDKFromArduino.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\Microsoft.IoT.SDKFromArduino.1.1.1\build\native\Microsoft.IoT.SDKFromArduino.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)packages\Microsoft.IoT.Lightning.1.0.2-alpha\build\native\Microsoft.IoT.Lightning.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\Microsoft.IoT.Lightning.1.0.2-alpha\build\native\Microsoft.IoT.Lightning.targets'))" />
   </Target>
-  <Import Project="..\packages\Microsoft.IoT.Lightning.1.0.2-alpha\build\native\Microsoft.IoT.Lightning.targets" Condition="Exists('..\packages\Microsoft.IoT.Lightning.1.0.2-alpha\build\native\Microsoft.IoT.Lightning.targets')" />
+  <Import Project="$(SolutionDir)packages\Microsoft.IoT.Lightning.1.0.2-alpha\build\native\Microsoft.IoT.Lightning.targets" Condition="Exists('$(SolutionDir)packages\Microsoft.IoT.Lightning.1.0.2-alpha\build\native\Microsoft.IoT.Lightning.targets')" />
 </Project>
