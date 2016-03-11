@@ -134,7 +134,6 @@ namespace Microsoft {
                     static const int MAX_FREQUENCY = 1000;
                     static const int MIN_FREQUENCY = 24;
                     static const unsigned int PCA9685_PIN_COUNT = 16;
-                    static const unsigned int RESOLUTION_BITS = 8;
 
                 public:
                     // Inherited via IPwmControllerProvider
@@ -170,7 +169,7 @@ namespace Microsoft {
 
                     inline ULONGLONG scaleDutyCycle(double dutyCycle, bool invertPolarity)
                     {
-                        return (((ULONGLONG)((invertPolarity ? 1- dutyCycle : dutyCycle) * 255) * (1ULL << 32)) + (1ULL << (RESOLUTION_BITS - 1))) / (1ULL << RESOLUTION_BITS);
+                        return (ULONGLONG)((invertPolarity ? 1- dutyCycle : dutyCycle)  * 0xFFFFFFFF);
                     }
 
                 };

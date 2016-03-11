@@ -14,6 +14,8 @@
     <ClCompile Include="Dummy.cpp">
       <Filter>Dependencies</Filter>
     </ClCompile>
+    <ClCompile Include="AdcDeviceProvider.cpp" />
+    <ClCompile Include="PwmDeviceProvider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

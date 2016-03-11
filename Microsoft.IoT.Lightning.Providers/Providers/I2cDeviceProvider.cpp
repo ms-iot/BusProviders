@@ -354,14 +354,21 @@ Platform::String ^ LightningI2cDeviceProvider::DeviceId::get()
     {
         if (board == BoardPinsClass::BOARD_TYPE::MBM_BARE)
         {
-            deviceName = mbmI2cDeviceName;;
+            deviceName = mbmI2cDeviceName;
         }
         else if (board == BoardPinsClass::BOARD_TYPE::PI2_BARE)
         {
-            if (_busNumber == SECOND_EXTERNAL_I2C_BUS)
+            switch (_busNumber)
+            {
+            case EXTERNAL_I2C_BUS:
                 deviceName = pi2I2c1DeviceName;
-            else
+                break;
+            case SECOND_EXTERNAL_I2C_BUS:
                 deviceName = pi2I2c0DeviceName;
+                break;
+            default:
+                hr = DMAP_E_I2C_INVALID_BUS_NUMBER_SPECIFIED;
+            }
         }
     }
 
