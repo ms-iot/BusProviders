@@ -13,7 +13,7 @@ using namespace Microsoft::IoT::Lightning::Providers;
 
 II2cProvider^ LightningI2cProvider::providerSingleton = nullptr;
 
-II2cProvider ^ LightningI2cProvider::GetI2cProvider()
+II2cProvider^ LightningI2cProvider::GetI2cProvider()
 {
     if (providerSingleton == nullptr)
     {
@@ -337,7 +337,7 @@ LightningI2cDeviceProvider::~LightningI2cDeviceProvider()
 {
     if (_I2cController != nullptr)
     {
-        // Set all SPI pins as digital I/O.
+        // Set all I2C pins as digital I/O.
         // This frees up the external SPI bus so its pins can be used for other functions
         _I2cController->end();
     }

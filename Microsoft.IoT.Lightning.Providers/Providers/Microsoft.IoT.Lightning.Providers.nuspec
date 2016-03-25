@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata minClientVersion="2.8.6">
         <id>Microsoft.IoT.Lightning.Providers</id>
-        <version>1.0.0-alpha</version>
+        <version>1.0.0</version>
         <title>Microsoft.IoT.Lightning.Providers</title>
         <description>The Microsoft.Iot.Lightning.Providers library provides a set of Windows.Devices.*Providers WinRT APIs enabling apps to use the new Lightning driver to communicate with and use controllers devices for Windows 10 IoT Core.</description>
         <summary>Microsoft IoT Lightning WinRT Providers</summary>
