@@ -13,9 +13,9 @@ namespace BlinkyBackground
 {
     public sealed class StartupTask : IBackgroundTask
     {
-        // On Raspberry Pi 2, pin 47 is the built in LED
+        // Use GPIO pin 5, which is available on Minnowboard Max, Raspberry Pi2 and Pi3
         // On Other boards, the pin number should be changed
-        private readonly int LED_PIN = 47;
+        private readonly int LED_PIN = 5;
         private ThreadPoolTimer blinkyTimer;
         private int LEDStatus = 0;
         GpioPin pin = null;

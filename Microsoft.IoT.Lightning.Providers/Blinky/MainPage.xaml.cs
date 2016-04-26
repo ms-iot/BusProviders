@@ -16,9 +16,9 @@ namespace Blinky
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        // On Raspberry Pi 2, pin 47 is the built in LED
-        // On Other devices, the pin number should be changed
-        private readonly int LED_PIN = 47;
+        // Use GPIO pin 5, which is available on Minnowboard Max, Raspberry Pi2 and Pi3
+        // On Other boards, the pin number should be changed
+        private readonly int LED_PIN = 5;
         private long currentTicks = 500; // every 500 msec
         private ThreadPoolTimer blinkyTimer;
         private bool blinkyStarted = false;
