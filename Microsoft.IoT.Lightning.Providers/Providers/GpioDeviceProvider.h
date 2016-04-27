@@ -44,8 +44,8 @@ namespace Microsoft {
                     // Inherited via IGpioPinProvider
                     virtual property TimeSpan DebounceTimeout
                     {
-                        TimeSpan get() { throw ref new Platform::Exception(E_NOTIMPL, L"DebounceTimeout is not supported"); }
-                        void set(TimeSpan timeSpan) { throw ref new Platform::Exception(E_NOTIMPL, L"DebounceTimeout is not supported"); }
+                        TimeSpan get() { return _DebounceTimeout; }
+                        void set(TimeSpan value) { _DebounceTimeout = value; }
                     }
 
                     virtual property int PinNumber { int get() { return _PinNumber; } }
@@ -67,20 +67,17 @@ namespace Microsoft {
                     virtual void Write(ProviderGpioPinValue value);
                     virtual ProviderGpioPinValue Read();
 
-                    // Not implemented since Lightning does yet support interrupts yet
                     virtual event TypedEventHandler<IGpioPinProvider^, GpioPinProviderValueChangedEventArgs^>^ ValueChanged
                     {
-                        EventRegistrationToken add(Windows::Foundation::TypedEventHandler<IGpioPinProvider ^, GpioPinProviderValueChangedEventArgs ^> ^)
+                        EventRegistrationToken add(Windows::Foundation::TypedEventHandler<IGpioPinProvider ^, GpioPinProviderValueChangedEventArgs ^>^ handler)
                         {
-                            // Not yet implemnted
-                            // Simply return an empty registration token
-                            // Do not throw an exception; add event may be called by the framework
-                            return EventRegistrationToken();
+                            Platform::Object^ o = reinterpret_cast<Object^>(this);
+                            HRESULT hr = g_pins.attachInterruptContext(_MappedPinNumber, &s_interruptCallback, (void*)reinterpret_cast<IInspectable*>(o), DMAP_INTERRUPT_MODE_EITHER);
+                            return _ValueChangedInternal += handler;
                         }
-                        void remove(Windows::Foundation::EventRegistrationToken)
+                        void remove(Windows::Foundation::EventRegistrationToken token)
                         {
-                            // Not yet implemnted
-                            // Do not throw an exception; remove event may be called by the framework
+                            _ValueChangedInternal -= token;
                         }
                     }
 
@@ -91,8 +88,11 @@ namespace Microsoft {
                         _MappedPinNumber(mappedPin),
                         _PinNumber(pin),
                         _SharingMode(sharingMode),
-                        _DriveMode(ProviderGpioPinDriveMode::Input)
+                        _DriveMode(ProviderGpioPinDriveMode::Input),
+                        _lastEventTime(0),
+                        _lastEventState(0)
                     {
+
                         if (sharingMode != ProviderGpioSharingMode::Exclusive)
                         {
                             throw ref new Platform::NotImplementedException(L"Unsupported Gpio Pin SharingMode");
@@ -100,16 +100,57 @@ namespace Microsoft {
 
                         // Default to output
                         SetDriveModeInternal(ProviderGpioPinDriveMode::Output);
+
+                        _DebounceTimeout.Duration = 0;
+
+                        LARGE_INTEGER li;
+                        QueryPerformanceFrequency(&li);
+                        _clockFrequency = double(li.QuadPart) / 100000.0; // Calaculate device clock freq in 100ns, same resolution as debounce
                     }
 
                 private:
                     LightningGpioPinProvider () {}
                     void SetDriveModeInternal(ProviderGpioPinDriveMode value);
 
+                    event TypedEventHandler<IGpioPinProvider^, GpioPinProviderValueChangedEventArgs^>^ _ValueChangedInternal;
+                    static void s_interruptCallback(PDMAP_WAIT_INTERRUPT_NOTIFY_BUFFER InfoPtr, PVOID context) {
+                        {
+                            if (InfoPtr && context)
+                            {
+                                Platform::Object^ o = reinterpret_cast<Platform::Object^>((IInspectable*)context);
+                                LightningGpioPinProvider^ pin = reinterpret_cast<LightningGpioPinProvider^>(o);
+
+                                if (pin == nullptr || InfoPtr->IntNo != pin->_PinNumber)
+                                {
+                                    return;
+                                }
+
+                                auto eventTimeDiff = (InfoPtr->EventTime - pin->_lastEventTime) / pin->_clockFrequency;
+                                if (eventTimeDiff >= pin->_DebounceTimeout.Duration || (eventTimeDiff > 0 && InfoPtr->NewState != pin->_lastEventState))
+                                {
+
+                                    pin->_ValueChangedInternal(pin, ref new GpioPinProviderValueChangedEventArgs((InfoPtr->NewState == 0) ?
+                                        ProviderGpioPinEdge::FallingEdge :
+                                        ProviderGpioPinEdge::RisingEdge));
+                                }
+
+                                // Save the last state
+                                pin->_lastEventTime = InfoPtr->EventTime;
+                                pin->_lastEventState = InfoPtr->NewState;
+                            }
+                        }
+                    }
+
                     int _PinNumber;
                     int _MappedPinNumber;
                     ProviderGpioSharingMode _SharingMode;
                     ProviderGpioPinDriveMode _DriveMode;
+                    TimeSpan _DebounceTimeout;
+
+                    // Used to keep track of interrupts
+                    long long _lastEventTime;
+                    unsigned short _lastEventState;
+                    double _clockFrequency;
                 };
 
             }
