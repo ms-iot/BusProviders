@@ -129,10 +129,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Providers\Microsoft.IoT.Lightning.Providers.vcxproj">
-      <Project>{46a913d5-f809-4026-9dc9-cf94f643a0fe}</Project>
-      <Name>Microsoft.IoT.Lightning.Providers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DisplayFont\DisplayFont.csproj">
       <Project>{fc89ae75-f054-4434-b00e-a0c9642160b4}</Project>
       <Name>DisplayFont</Name>

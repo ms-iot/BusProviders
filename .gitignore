@@ -195,3 +195,5 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 *.opendb
+Microsoft.IoT.Lightning.Providers/Blinky/Cpp/Generated Files/*
+Microsoft.IoT.Lightning.Providers/WeatherStation/BundleArtifacts/*

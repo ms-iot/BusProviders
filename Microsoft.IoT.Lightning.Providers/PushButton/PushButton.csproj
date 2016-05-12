@@ -131,12 +131,6 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Providers\Microsoft.Iot.Lightning.Providers.vcxproj">
-      <Project>{46a913d5-f809-4026-9dc9-cf94f643a0fe}</Project>
-      <Name>Microsoft.IoT.Lightning.Providers</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
