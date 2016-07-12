@@ -1,6 +1,6 @@
 ﻿{
   "dependencies": {
-    "Microsoft.IoT.Lightning": "1.1.0-alpha",
+    "Microsoft.IoT.Lightning": "1.1.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0"
   },
   "frameworks": {

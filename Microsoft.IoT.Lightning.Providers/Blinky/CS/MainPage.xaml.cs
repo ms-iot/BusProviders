@@ -22,6 +22,7 @@ namespace Blinky
         private ThreadPoolTimer blinkyTimer;
         private bool blinkyStarted = false;
         private GpioPin pin = null;
+        private bool isHigh = false;
 
         public MainPage()
         {
@@ -52,7 +53,8 @@ namespace Blinky
                 BlinkyStartStop.IsEnabled = false;
             }
 
-            pin = gpioController.OpenPin(LED_PIN, GpioSharingMode.Exclusive);
+            pin = gpioController.OpenPin(LED_PIN);
+            pin.Write(GpioPinValue.High);
             pin.SetDriveMode(GpioPinDriveMode.Output);
         }
 
@@ -63,7 +65,7 @@ namespace Blinky
                 return;
             }
 
-            if (pin.Read() == GpioPinValue.High)
+            if (isHigh)
             {
                 pin.Write(GpioPinValue.Low);
             }
@@ -71,6 +73,8 @@ namespace Blinky
             {
                 pin.Write(GpioPinValue.High);
             }
+
+            isHigh = !isHigh;
         }
 
         private async void Start()
