@@ -197,3 +197,4 @@ FakesAssemblies/
 *.opendb
 Microsoft.IoT.Lightning.Providers/Blinky/Cpp/Generated Files/*
 Microsoft.IoT.Lightning.Providers/WeatherStation/BundleArtifacts/*
+*.db
