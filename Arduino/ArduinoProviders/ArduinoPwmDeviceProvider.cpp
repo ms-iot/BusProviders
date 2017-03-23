@@ -2,6 +2,10 @@
 #include "pch.h"  
 #include "ArduinoPwmDeviceProvider.h"
 #include "ArduinoConnection.h"
+#include <ppltasks.h>
+
+using namespace concurrency;
+
 
 using namespace ArduinoProviders;
 using namespace Platform::Collections;
@@ -21,7 +25,7 @@ void ArduinoPwmControllerProvider::SetPulseParameters(int pin, double dutyCycle,
 
 void ArduinoPwmControllerProvider::Initialize()
 {
-    _Arduino = ArduinoConnection::Arduino;
+    _Arduino = create_task(ArduinoConnection::GetArduinoConnectionAsync()).get();
 }
 
 IVectorView<IPwmControllerProvider^>^ ArduinoPwmProvider::GetControllers(

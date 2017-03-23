@@ -59,7 +59,7 @@ namespace ArduinoProviders
         virtual ~ArduinoI2cDeviceProvider();
 
     internal:
-        ArduinoI2cDeviceProvider(ProviderI2cConnectionSettings ^settings);
+        ArduinoI2cDeviceProvider(RemoteDevice^ arduino, ProviderI2cConnectionSettings ^settings);
 
     private:
         ProviderI2cConnectionSettings ^_ConnectionSettings;
@@ -76,9 +76,12 @@ namespace ArduinoProviders
     ref class ArduinoI2cControllerProvider sealed : public II2cControllerProvider
     {
     public:
+        ArduinoI2cControllerProvider();
         // Inherited via II2cControllerProvider
         virtual II2cDeviceProvider ^ GetDeviceProvider(ProviderI2cConnectionSettings ^settings);
 
+    private:
+        RemoteDevice ^_Arduino;
     };
 
     public ref class ArduinoI2cProvider sealed : public II2cProvider

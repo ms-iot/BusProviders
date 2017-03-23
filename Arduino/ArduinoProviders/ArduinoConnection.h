@@ -17,8 +17,7 @@ namespace ArduinoProviders
     {
 
     public:
-        static property RemoteDevice^ Arduino { RemoteDevice^ get(); }
-        static property bool Connected { bool get(); }
+        static IAsyncOperation<RemoteDevice^>^ GetArduinoConnectionAsync();
 
         static property ArduinoConnectionConfiguration^ Configuration
         {
@@ -27,7 +26,12 @@ namespace ArduinoProviders
         }
 
     private:
+        static bool WaitForConnection(unsigned int timeout = INFINITE);
+
         static ArduinoConnectionConfiguration ^_ArduinoConnectionConfiguration;
+
+        static HANDLE _ConnectedEvent;
+        static std::mutex _ConnectionMutex;
 
         static UsbSerial ^_Usb;
         static RemoteDevice ^_Arduino;

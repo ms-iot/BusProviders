@@ -22,9 +22,9 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
     _Deferral = taskInstance->GetDeferral();
     _FanOn = true;
 
-	ArduinoProviders::ArduinoProvider::Configuration =
-		ref new ArduinoProviders::ArduinoConnectionConfiguration("VID_2341", "PID_0043", 57600);
-	Windows::Devices::LowLevelDevicesController::DefaultProvider = ref new ArduinoProviders::ArduinoProvider();
+    ArduinoProviders::ArduinoProvider::Configuration =
+        ref new ArduinoProviders::ArduinoConnectionConfiguration("VID_2341", "PID_0043", 57600);
+    Windows::Devices::LowLevelDevicesController::DefaultProvider = ref new ArduinoProviders::ArduinoProvider();
 
     TimeSpan interval;
     interval.Duration = 50 * 1000 * 10;
@@ -35,13 +35,13 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
     // based on whether the ambient temperature is higher than the
     // temperature set by the potentiometer attached via ADC below.
     //
-    auto pwmController = concurrency::create_task(PwmController::GetDefaultAsync()).get();
-    _PwmPin = pwmController->OpenPin(3);
-    _PwmPin->SetActiveDutyCyclePercentage(0.0);
-    _PwmPin->Start();
+    concurrency::create_task(PwmController::GetDefaultAsync()).then([this, interval](PwmController^ pwmController) {
+        _PwmPin = pwmController->OpenPin(3);
+        _PwmPin->SetActiveDutyCyclePercentage(0.0);
+        _PwmPin->Start();
 
-    _PwmTimer = ThreadPoolTimer::CreatePeriodicTimer(
-        ref new TimerElapsedHandler([this, pwmController](ThreadPoolTimer ^timer)
+        _PwmTimer = ThreadPoolTimer::CreatePeriodicTimer(
+            ref new TimerElapsedHandler([this, pwmController](ThreadPoolTimer ^timer)
         {
             std::lock_guard<std::mutex> lock(_Mutex);
 
@@ -55,18 +55,19 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
                 // if the ambient temperature is above the threshold, turn on the fan
                 _PwmPin->SetActiveDutyCyclePercentage(2.0 / (1000.0 / pwmController->ActualFrequency));
             }
-        }), 
-        interval);
+        }),
+            interval);
+    });
 
     //
     // Use AdcController to read the value from a potentiometer
     // on ADC pin #1.  This value will converted to a temperature
     // threshold between 50 and 100 degrees farenheit.
     //
-    auto adcController = concurrency::create_task(Windows::Devices::Adc::AdcController::GetDefaultAsync()).get();
-    _AdcChannel = adcController->OpenChannel(1);
-    _AdcTimer = ThreadPoolTimer::CreatePeriodicTimer(
-        ref new TimerElapsedHandler([this](ThreadPoolTimer ^timer)
+    concurrency::create_task(AdcController::GetDefaultAsync()).then([this, interval](AdcController^ adcController) {
+        _AdcChannel = adcController->OpenChannel(1);
+        _AdcTimer = ThreadPoolTimer::CreatePeriodicTimer(
+            ref new TimerElapsedHandler([this](ThreadPoolTimer ^timer)
         {
             if (_FanOn)
             {
@@ -79,17 +80,18 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
                         double(_TemperatureRangeMax - _TemperatureRangeMin) * double(_AdcChannel->ReadValue()) / double(_PotentiometerMax - _PotentiometerMin));
             }
         }),
-        interval);
+            interval);
+    });
 
     //
     // Use I2cController to read the ambient temperature from a HTU21D
     // sensor connected to the I2c pins.
     //
-    auto i2cController = concurrency::create_task(Windows::Devices::I2c::I2cController::GetDefaultAsync()).get();
-    auto i2cConnectionSettings = ref new Windows::Devices::I2c::I2cConnectionSettings(0x40);
-    _I2cDevice = i2cController->GetDevice(i2cConnectionSettings);
-    _I2cTimer = ThreadPoolTimer::CreatePeriodicTimer(
-        ref new TimerElapsedHandler([this](ThreadPoolTimer ^timer)
+    concurrency::create_task(I2cController::GetDefaultAsync()).then([this, interval](I2cController^ i2cController) {
+        auto i2cConnectionSettings = ref new Windows::Devices::I2c::I2cConnectionSettings(0x40);
+        _I2cDevice = i2cController->GetDevice(i2cConnectionSettings);
+        _I2cTimer = ThreadPoolTimer::CreatePeriodicTimer(
+            ref new TimerElapsedHandler([this](ThreadPoolTimer ^timer)
         {
             if (_FanOn)
             {
@@ -106,44 +108,45 @@ void StartupTask::Run(IBackgroundTaskInstance^ taskInstance)
                 _CurrentTemperature = std::round((-46.85 + (175.72 * ratio)) * 9.0 / 5.0 + 32.0);
             }
         }),
-        interval);
-
+            interval);
+    });
 
     //
     // Use GpioController to toggle a LED on GPIO pin 7 when our
     // fan system is on/off.
     //
-    auto gpioController = concurrency::create_task(Windows::Devices::Gpio::GpioController::GetDefaultAsync()).get();
-    _LedPin = gpioController->OpenPin(7);
-    _LedPin->SetDriveMode(Windows::Devices::Gpio::GpioPinDriveMode::Output);
-    _LedPin->Write(
-        _FanOn ?
-        Windows::Devices::Gpio::GpioPinValue::Low :
-        Windows::Devices::Gpio::GpioPinValue::High
+    concurrency::create_task(GpioController::GetDefaultAsync()).then([this, interval](GpioController^ gpioController) {
+        _LedPin = gpioController->OpenPin(7);
+        _LedPin->SetDriveMode(Windows::Devices::Gpio::GpioPinDriveMode::Output);
+        _LedPin->Write(
+            _FanOn ?
+            Windows::Devices::Gpio::GpioPinValue::Low :
+            Windows::Devices::Gpio::GpioPinValue::High
         );
 
-    //
-    // Use GpioController to read the on/off state of our fan
-    // system from a button connected to GPIO pin 8
-    //
-    _ButtonPin = gpioController->OpenPin(8);
-    _ButtonPin->SetDriveMode(Windows::Devices::Gpio::GpioPinDriveMode::Input);
-    _ButtonPin->ValueChanged +=
-        ref new Windows::Foundation::TypedEventHandler<Windows::Devices::Gpio::GpioPin^, Windows::Devices::Gpio::GpioPinValueChangedEventArgs^>(
-            [this](
-                Windows::Devices::Gpio::GpioPin ^sender, 
-                Windows::Devices::Gpio::GpioPinValueChangedEventArgs ^e) 
-        {
-            if (e->Edge == Windows::Devices::Gpio::GpioPinEdge::FallingEdge)
+        //
+        // Use GpioController to read the on/off state of our fan
+        // system from a button connected to GPIO pin 8
+        //
+        _ButtonPin = gpioController->OpenPin(8);
+        _ButtonPin->SetDriveMode(Windows::Devices::Gpio::GpioPinDriveMode::Input);
+        _ButtonPin->ValueChanged +=
+            ref new Windows::Foundation::TypedEventHandler<Windows::Devices::Gpio::GpioPin^, Windows::Devices::Gpio::GpioPinValueChangedEventArgs^>(
+                [this](
+                    Windows::Devices::Gpio::GpioPin ^sender,
+                    Windows::Devices::Gpio::GpioPinValueChangedEventArgs ^e)
             {
-                _FanOn = !_FanOn;
-                _LedPin->Write(
-                    _FanOn ?
-                    Windows::Devices::Gpio::GpioPinValue::Low :
-                    Windows::Devices::Gpio::GpioPinValue::High
+                if (e->Edge == Windows::Devices::Gpio::GpioPinEdge::FallingEdge)
+                {
+                    _FanOn = !_FanOn;
+                    _LedPin->Write(
+                        _FanOn ?
+                        Windows::Devices::Gpio::GpioPinValue::Low :
+                        Windows::Devices::Gpio::GpioPinValue::High
                     );
-            }
-            
+                }
+
+            });
         });
 }
 

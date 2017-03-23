@@ -2,17 +2,21 @@
 #include "pch.h"  
 #include "ArduinoI2cDeviceProvider.h"
 #include "ArduinoConnection.h"
+#include <ppltasks.h>
+
+using namespace concurrency;
+
 
 using namespace ArduinoProviders;
 using namespace Platform::Collections;
 
-ArduinoI2cDeviceProvider::ArduinoI2cDeviceProvider(ProviderI2cConnectionSettings ^settings)
+ArduinoI2cDeviceProvider::ArduinoI2cDeviceProvider(RemoteDevice^ arduino, ProviderI2cConnectionSettings ^settings)
 {
     _ConnectionSettings = settings;
 
     _DataRead = CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
 
-    _Arduino = ArduinoConnection::Arduino;
+    _Arduino = arduino;
 
     _Arduino->I2c->I2cReplyEvent +=
             ref new I2cReplyCallback(
@@ -125,11 +129,16 @@ ProviderI2cTransferResult ArduinoI2cDeviceProvider::WriteReadPartial(
     return result;
 }
 
+ArduinoI2cControllerProvider::ArduinoI2cControllerProvider()
+{
+    _Arduino = create_task(ArduinoConnection::GetArduinoConnectionAsync()).get();
+}
+
 II2cDeviceProvider ^ ArduinoI2cControllerProvider::GetDeviceProvider(
     ProviderI2cConnectionSettings ^settings
     )
 {
-    return ref new ArduinoI2cDeviceProvider(settings);
+    return ref new ArduinoI2cDeviceProvider(_Arduino, settings);
 }
 
 IAsyncOperation<IVectorView<II2cControllerProvider^>^>^ ArduinoI2cProvider::GetControllersAsync(
