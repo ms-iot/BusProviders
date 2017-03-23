@@ -2,6 +2,9 @@
 #include "pch.h"  
 #include "ArduinoGpioDeviceProvider.h"
 #include "ArduinoConnection.h"
+#include <ppltasks.h>
+
+using namespace concurrency;
 
 using namespace ArduinoProviders;
 using namespace Platform::Collections;
@@ -54,8 +57,6 @@ void ArduinoGpioPinProvider::OnValueChanged(GpioPinProviderValueChangedEventArgs
 
 void ArduinoGpioPinProvider::Initialize()
 {
-    _Arduino = ArduinoConnection::Arduino;
-
     _Arduino->DigitalPinUpdated +=
         ref new Microsoft::Maker::RemoteWiring::DigitalPinUpdatedCallback(this, &ArduinoGpioPinProvider::OnDigitalPinUpdated);
 
@@ -78,12 +79,17 @@ void ArduinoGpioPinProvider::OnDigitalPinUpdated(unsigned char pin, PinState val
     }
 }
 
+ArduinoGpioControllerProvider::ArduinoGpioControllerProvider()
+{
+    _Arduino = create_task(ArduinoConnection::GetArduinoConnectionAsync()).get();
+}
+
 IGpioPinProvider^ ArduinoGpioControllerProvider::OpenPinProvider(
     int pinNumber,
     ProviderGpioSharingMode sharingMode
     )
 {
-    return ref new ArduinoGpioPinProvider(pinNumber, sharingMode);
+    return ref new ArduinoGpioPinProvider(_Arduino, pinNumber, sharingMode);
 }
 
 IVectorView<IGpioControllerProvider^>^ ArduinoGpioProvider::GetControllers(

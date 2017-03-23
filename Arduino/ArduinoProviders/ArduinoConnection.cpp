@@ -1,19 +1,19 @@
 // Copyright (c) Microsoft. All rights reserved.
 #include "pch.h"  
 #include "ArduinoConnection.h"  
+#include <ppltasks.h>
+
+using namespace concurrency;
 
 using namespace ArduinoProviders;
 using namespace Platform::Collections;
 
+HANDLE ArduinoConnection::_ConnectedEvent = nullptr;
+std::mutex ArduinoConnection::_ConnectionMutex;
+
 UsbSerial ^ArduinoConnection::_Usb = nullptr;
 RemoteDevice ^ArduinoConnection::_Arduino = nullptr;
-bool ArduinoConnection::_Connected = false;
 ArduinoConnectionConfiguration ^ArduinoConnection::_ArduinoConnectionConfiguration = nullptr;
-
-bool ArduinoConnection::Connected::get()
-{
-    return _Connected;
-}
 
 ArduinoConnectionConfiguration^ ArduinoConnection::Configuration::get()
 {
@@ -33,33 +33,50 @@ void ArduinoConnection::Configuration::set(ArduinoConnectionConfiguration^ value
     _ArduinoConnectionConfiguration = value;
 }
 
-RemoteDevice^ ArduinoConnection::Arduino::get()
+bool ArduinoConnection::WaitForConnection(unsigned int timeout)
 {
-    if (_Arduino == nullptr)
-    {
-        _Usb = ref new UsbSerial(Configuration->Vid, Configuration->Pid);
-        _Arduino = ref new RemoteDevice(_Usb);
 
-        _Arduino->DeviceReady +=
-            ref new RemoteDeviceConnectionCallback([]() -> void
+    DWORD dwWaitResult = WaitForSingleObjectEx(_ConnectedEvent, timeout, true);
+    return (dwWaitResult == WAIT_OBJECT_0);
+}
+
+IAsyncOperation<RemoteDevice^>^ ArduinoConnection::GetArduinoConnectionAsync()
+{
+    auto config = ArduinoConnection::Configuration;
+    auto vid = config->Vid;
+    auto pid = config->Pid;
+    auto baudRate = config->BaudRate;
+
+    return create_async([vid, pid, baudRate]() -> RemoteDevice^ {
+
+        std::lock_guard<std::mutex> lock(_ConnectionMutex);
+
+        if (_Arduino == nullptr)
         {
-            _Connected = true;
-        });
+            _ConnectedEvent = CreateEventEx(NULL, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
 
-        _Arduino->DeviceConnectionFailed +=
-            ref new RemoteDeviceConnectionCallbackWithMessage([](Platform::String^ message) -> void
-        {
-            throw ref new Platform::Exception(E_FAIL, message);
-        });
+            _Usb = ref new UsbSerial(vid, pid);
+            _Arduino = ref new RemoteDevice(_Usb);
 
-        int baudRate = Configuration->BaudRate;
-        _Usb->begin(baudRate, SerialConfig::SERIAL_8N1);
+            _Arduino->DeviceReady +=
+                ref new RemoteDeviceConnectionCallback([]() -> void
+            {
+                SetEvent(_ConnectedEvent);
+            });
 
-        while (!_Connected)
-        {
-            Sleep(1000);
+            _Arduino->DeviceConnectionFailed +=
+                ref new RemoteDeviceConnectionCallbackWithMessage([](Platform::String^ message) -> void
+            {
+                throw ref new Platform::Exception(E_FAIL, message);
+            });
+
+            _Usb->begin(baudRate, SerialConfig::SERIAL_8N1);
+
+            if (!WaitForConnection(INFINITE))
+            {
+                throw ref new Platform::Exception(E_FAIL);
+            }
         }
-    }
-    return _Arduino;
-
+        return _Arduino;
+    });
 }

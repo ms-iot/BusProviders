@@ -2,6 +2,9 @@
 #include "pch.h"  
 #include "ArduinoAdcDeviceProvider.h"  
 #include "ArduinoConnection.h"
+#include <ppltasks.h>
+
+using namespace concurrency;
 
 using namespace ArduinoProviders;
 using namespace Platform::Collections;
@@ -19,7 +22,7 @@ int ArduinoAdcControllerProvider::ReadValue(int channel)
 
 void ArduinoAdcControllerProvider::Initialize()
 {
-    _Arduino = ArduinoConnection::Arduino;
+    _Arduino = create_task(ArduinoConnection::GetArduinoConnectionAsync()).get();
 }
 
 IVectorView<IAdcControllerProvider^>^ ArduinoAdcProvider::GetControllers(
