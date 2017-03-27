@@ -11,7 +11,7 @@
     <AssemblyName>ArduinoConsumer</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10563.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10556.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
@@ -116,15 +116,15 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\remote-wiring-develop\Microsoft.Maker.win10\Microsoft.Maker.Firmata\Microsoft.Maker.Firmata.vcxproj">
+    <ProjectReference Include="..\..\remote-wiring\Microsoft.Maker.win10\Microsoft.Maker.Firmata\Microsoft.Maker.Firmata.vcxproj">
       <Project>{f0a53bc9-c617-47dd-8b68-f91e3502d633}</Project>
       <Name>Microsoft.Maker.Firmata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\remote-wiring-develop\Microsoft.Maker.win10\Microsoft.Maker.RemoteWiring\Microsoft.Maker.RemoteWiring.vcxproj">
+    <ProjectReference Include="..\..\remote-wiring\Microsoft.Maker.win10\Microsoft.Maker.RemoteWiring\Microsoft.Maker.RemoteWiring.vcxproj">
       <Project>{5a8b1bb1-7cd5-47c4-a1f7-d7bcf5facad1}</Project>
       <Name>Microsoft.Maker.RemoteWiring</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\serial-wiring-develop\Microsoft.Maker.Serial.win10\Microsoft.Maker.Serial.vcxproj">
+    <ProjectReference Include="..\..\serial-wiring\Microsoft.Maker.Serial.win10\Microsoft.Maker.Serial.vcxproj">
       <Project>{8376216c-282a-4927-b9ef-c2d545fe0bca}</Project>
       <Name>Microsoft.Maker.Serial</Name>
     </ProjectReference>
@@ -134,7 +134,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsIoT, Version=10.0.10563.0">
+    <SDKReference Include="WindowsIoT, Version=10.0.14393.0">
       <Name>Windows IoT Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
