@@ -47,7 +47,9 @@ The ArduinoConsumer and ArduinoConsumerCpp projects utilize the ADC, PWM, GPIO, 
 * 10k Ohm resistor
 * breadboard and some wires
 
-To setup your "thermostat driven fan," see https://github.com/ms-iot/BusProviders/blob/develop/Arduino/ArduinoConsumer_bb.jpg.
+Setup your "thermostat driven fan" according to this diagram:
+
+![HW Setup](https://github.com/ms-iot/BusProviders/blob/develop/Arduino/ArduinoConsumer_bb.jpg).
 
 ### SDK version
 Additionally, the following version of the Windows SDK should be available for building and using the library: 10.0.10563.0
