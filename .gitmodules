@@ -1,0 +1,6 @@
+[submodule "Arduino/remote-wiring"]
+	path = Arduino/remote-wiring
+	url = https://github.com/ms-iot/remote-wiring
+[submodule "Arduino/serial-wiring"]
+	path = Arduino/serial-wiring
+	url = https://github.com/ms-iot/serial-wiring
