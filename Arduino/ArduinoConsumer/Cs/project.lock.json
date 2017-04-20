@@ -15653,18 +15653,18 @@
     },
     "Microsoft.Maker.Firmata/1.0.0": {
       "type": "project",
-      "path": "../../../../remote-wiring-develop/Microsoft.Maker.win10/Microsoft.Maker.Firmata/Microsoft.Maker.Firmata.vcxproj",
-      "msbuildProject": "../../../../remote-wiring-develop/Microsoft.Maker.win10/Microsoft.Maker.Firmata/Microsoft.Maker.Firmata.vcxproj"
+      "path": "../../remote-wiring/Microsoft.Maker.win10/Microsoft.Maker.Firmata/Microsoft.Maker.Firmata.vcxproj",
+      "msbuildProject": "../../remote-wiring/Microsoft.Maker.win10/Microsoft.Maker.Firmata/Microsoft.Maker.Firmata.vcxproj"
     },
     "Microsoft.Maker.RemoteWiring/1.0.0": {
       "type": "project",
-      "path": "../../../../remote-wiring-develop/Microsoft.Maker.win10/Microsoft.Maker.RemoteWiring/Microsoft.Maker.RemoteWiring.vcxproj",
-      "msbuildProject": "../../../../remote-wiring-develop/Microsoft.Maker.win10/Microsoft.Maker.RemoteWiring/Microsoft.Maker.RemoteWiring.vcxproj"
+      "path": "../../remote-wiring/Microsoft.Maker.win10/Microsoft.Maker.RemoteWiring/Microsoft.Maker.RemoteWiring.vcxproj",
+      "msbuildProject": "../../remote-wiring/Microsoft.Maker.win10/Microsoft.Maker.RemoteWiring/Microsoft.Maker.RemoteWiring.vcxproj"
     },
     "Microsoft.Maker.Serial/1.0.0": {
       "type": "project",
-      "path": "../../../../serial-wiring-develop/Microsoft.Maker.Serial.win10/Microsoft.Maker.Serial.vcxproj",
-      "msbuildProject": "../../../../serial-wiring-develop/Microsoft.Maker.Serial.win10/Microsoft.Maker.Serial.vcxproj"
+      "path": "../../serial-wiring/Microsoft.Maker.Serial.win10/Microsoft.Maker.Serial.vcxproj",
+      "msbuildProject": "../../serial-wiring/Microsoft.Maker.Serial.win10/Microsoft.Maker.Serial.vcxproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -15674,29 +15674,29 @@
     "UAP,Version=v10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\bfjelds.REDMOND\\.nuget\\packages\\": {}
+    "C:\\Users\\tgoodhew\\.nuget\\packages\\": {}
   },
   "project": {
     "restore": {
-      "projectUniqueName": "D:\\git\\BusProviders\\Arduino\\ArduinoConsumer\\Cs\\ArduinoConsumer.csproj",
+      "projectUniqueName": "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\ArduinoConsumer\\Cs\\ArduinoConsumer.csproj",
       "projectName": "ArduinoConsumer",
-      "projectPath": "D:\\git\\BusProviders\\Arduino\\ArduinoConsumer\\Cs\\ArduinoConsumer.csproj",
-      "projectJsonPath": "D:\\git\\BusProviders\\Arduino\\ArduinoConsumer\\Cs\\project.json",
+      "projectPath": "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\ArduinoConsumer\\Cs\\ArduinoConsumer.csproj",
+      "projectJsonPath": "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\ArduinoConsumer\\Cs\\project.json",
       "projectStyle": "ProjectJson",
       "frameworks": {
         "uap10.0": {
           "projectReferences": {
-            "D:\\git\\remote-wiring-develop\\Microsoft.Maker.win10\\Microsoft.Maker.Firmata\\Microsoft.Maker.Firmata.vcxproj": {
-              "projectPath": "D:\\git\\remote-wiring-develop\\Microsoft.Maker.win10\\Microsoft.Maker.Firmata\\Microsoft.Maker.Firmata.vcxproj"
+            "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\ArduinoProviders\\ArduinoProviders.vcxproj": {
+              "projectPath": "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\ArduinoProviders\\ArduinoProviders.vcxproj"
             },
-            "D:\\git\\remote-wiring-develop\\Microsoft.Maker.win10\\Microsoft.Maker.RemoteWiring\\Microsoft.Maker.RemoteWiring.vcxproj": {
-              "projectPath": "D:\\git\\remote-wiring-develop\\Microsoft.Maker.win10\\Microsoft.Maker.RemoteWiring\\Microsoft.Maker.RemoteWiring.vcxproj"
+            "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\remote-wiring\\Microsoft.Maker.win10\\Microsoft.Maker.Firmata\\Microsoft.Maker.Firmata.vcxproj": {
+              "projectPath": "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\remote-wiring\\Microsoft.Maker.win10\\Microsoft.Maker.Firmata\\Microsoft.Maker.Firmata.vcxproj"
             },
-            "D:\\git\\serial-wiring-develop\\Microsoft.Maker.Serial.win10\\Microsoft.Maker.Serial.vcxproj": {
-              "projectPath": "D:\\git\\serial-wiring-develop\\Microsoft.Maker.Serial.win10\\Microsoft.Maker.Serial.vcxproj"
+            "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\remote-wiring\\Microsoft.Maker.win10\\Microsoft.Maker.RemoteWiring\\Microsoft.Maker.RemoteWiring.vcxproj": {
+              "projectPath": "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\remote-wiring\\Microsoft.Maker.win10\\Microsoft.Maker.RemoteWiring\\Microsoft.Maker.RemoteWiring.vcxproj"
             },
-            "D:\\git\\BusProviders\\Arduino\\ArduinoProviders\\ArduinoProviders.vcxproj": {
-              "projectPath": "D:\\git\\BusProviders\\Arduino\\ArduinoProviders\\ArduinoProviders.vcxproj"
+            "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\serial-wiring\\Microsoft.Maker.Serial.win10\\Microsoft.Maker.Serial.vcxproj": {
+              "projectPath": "C:\\Users\\tgoodhew\\Source\\Repos\\BusProviders\\Arduino\\serial-wiring\\Microsoft.Maker.Serial.win10\\Microsoft.Maker.Serial.vcxproj"
             }
           }
         }
